@@ -664,11 +664,11 @@ if st.button("🔍 Extraer datos"):
             st.warning("⚠️ No se encontraron datos en Procarne")
 
     # === Descarga ===
-    excel_bytes = save_to_excel(
-        all_agro_data, all_ariztia_data, all_apunto_data, all_bilbao_data,
-        all_nubles_data, all_donacarne_data, all_carnicero_data,
-        all_frigorifico_data, all_procarne_data
-    )
+    # excel_bytes = save_to_excel(
+    #     all_agro_data, all_ariztia_data, all_apunto_data, all_bilbao_data,
+    #     all_nubles_data, all_donacarne_data, all_carnicero_data,
+    #     all_frigorifico_data, all_procarne_data
+    # )
 
     # st.download_button(
     #     label="📥 Descargar datos en Excel",
