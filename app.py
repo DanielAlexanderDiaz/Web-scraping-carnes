@@ -2,9 +2,9 @@ import streamlit as st
 
 pages = {
     "": [
-        st.Page("pages/todo.py", title="Todos los sitios"),
+        st.Page("pages/todo.py", title="Todos los sitios web"),
     ],
-    "Tiendas": [
+    "Sitios web": [
         st.Page("pages/agrocomercial.py", title="Agrocomercial"),
     ]
 }
