@@ -56,17 +56,16 @@ def extract_agrocomercial(url):
                 nombre_corto = f"{solo_nombre}"
                 nombre_simple = re.sub(p, ' ', solo_nombre)
                 if solo_nombre != 'sin data':
-                    # data.append([categoria, nombre_completo, valor_kg_neto_int])
                     data.append([categoria, nombre_largo, nombre_corto, nombre_simple,f'{precio_neto_kg:.0f}', f'{precio_neto_total:.0f}', f'{precio_bruto_kg:.0f}', f'{precio_bruto_total:.0f}'])
-                    print(f"""
-                          Categoria: {categoria},
-                          nombre_largo: {nombre_largo}, 
-                          nombre_corto: {nombre_corto}, 
-                          nombre_simple: {nombre_simple},
-                          precio_neto_kg: {precio_neto_kg:.0f}, 
-                          precio_neto_total: {precio_neto_total:.0f}, 
-                          precio_bruto_kg: {precio_bruto_kg:.0f}, 
-                          precio_bruto_total: {precio_bruto_total:.0f}""")
+                    # print(f"""
+                    #       Categoria: {categoria},
+                    #       nombre_largo: {nombre_largo}, 
+                    #       nombre_corto: {nombre_corto}, 
+                    #       nombre_simple: {nombre_simple},
+                    #       precio_neto_kg: {precio_neto_kg:.0f}, 
+                    #       precio_neto_total: {precio_neto_total:.0f}, 
+                    #       precio_bruto_kg: {precio_bruto_kg:.0f}, 
+                    #       precio_bruto_total: {precio_bruto_total:.0f}""")
             except (ValueError, ZeroDivisionError) as e:
                 print(f"Error procesando producto: {nombre} - {e}")
                 continue
