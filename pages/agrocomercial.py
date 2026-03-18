@@ -1,0 +1,98 @@
+import streamlit as st
+from bs4 import BeautifulSoup
+import requests
+import pandas as pd
+import re
+
+st.title("Agrocomercial")
+
+def extract_agrocomercial(url):
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'}
+    response = requests.get(url, headers=headers)
+    data = []
+
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.text, 'html.parser')
+        categoria = soup.find('div', class_='et_pb_heading_container').text
+        productos = soup.find_all('li', class_='status-publish')
+
+        for producto in productos:
+            solo_nombre = 'sin data'
+            kg = 1
+
+            nombre_tag = producto.find('h2', class_='woocommerce-loop-product__title')
+            if not nombre_tag:
+                continue
+            nombre = nombre_tag.text.strip()
+
+            patron = r'^(.*?)\s+(\d+(?:\.\d+)?)\s*[kK][gG]\b'
+            match = re.match(patron, nombre)
+            if match:
+                solo_nombre = match.group(1).strip()
+                kg = match.group(2)
+
+            precio_final = None
+            ins_tag = producto.find('ins')
+            if ins_tag:
+                precio_final = ins_tag.get_text(strip=True).replace('$', '').replace('.', '')
+            else:
+                span_precio = producto.find('span', class_='woocommerce-Price-amount')
+                if span_precio:
+                    precio_final = span_precio.get_text(strip=True).replace('$', '').replace('.', '')
+                else:
+                    continue  # Saltar si no hay precio
+
+            try:
+                kg_int = float(kg)
+                precio_int = int(precio_final)
+                valor_kg_total = precio_int / kg_int
+                valor_kg_neto = valor_kg_total / 1.19
+                valor_kg_neto_int = int(valor_kg_neto)
+                nombre_completo = f"{solo_nombre}, {kg} kg"
+                if solo_nombre != 'sin data':
+                    data.append([categoria, nombre_completo, valor_kg_neto_int])
+                    print(f"Categoria: {categoria},Producto: {nombre_completo}, Precio: {valor_kg_neto_int}")
+            except (ValueError, ZeroDivisionError) as e:
+                print(f"Error procesando producto: {nombre} - {e}")
+                continue
+
+        print(f'Datos extraídos de Agrocomercial: {url}')
+    else:
+        print(f"Error al acceder a Agrocomercial {url}. Código: {response.status_code}")
+
+    return data
+
+if st.button("🔍 Extraer datos"):
+    # === Contar URLs totales ===
+    urls_agro = ['vacuno/','aves/pollo/','cerdo/','cordero/','aves/pavo/','vacuno/elaborados/','detalle/']
+
+    total_urls = (len(urls_agro))
+    # === Inicializar barra de progreso ===
+    progress_bar = st.progress(0)
+    status_text = st.empty()
+    current_step = 0
+
+    # === Agrocomercial ===
+    base_agro = 'https://agrocomercial.cl/product-category/'
+    all_agro_data = []
+    for url in urls_agro:
+        clean_url = f"{base_agro}{url.strip()}"
+        try:
+            all_agro_data.extend(extract_agrocomercial(clean_url))
+        except Exception as e:
+            print(f"Error en Agrocomercial {clean_url}: {e}")
+        current_step += 1
+        progress_bar.progress(current_step / total_urls)
+        status_text.text(f"Procesando Agrocomercial... ({current_step}/{total_urls})")
+
+    # === Finalizar ===
+    status_text.text("✅ Extracción completada.")
+    progress_bar.progress(1.0)
+
+    # === Mostrar resultados en tabs ===
+    if all_agro_data:
+        st.subheader("Agrocomercial.cl")
+        df = pd.DataFrame(all_agro_data, columns=['Categoria', 'Nombre', 'Precio'])
+        st.dataframe(df, width='stretch', hide_index=True)
+    else:
+        st.warning("⚠️ No se encontraron datos en Agrocomercial")
