@@ -43,19 +43,26 @@ def extract_agrocomercial(url):
                     continue  # Saltar si no hay precio
 
             try:
-                kg_int = float(kg)
-                precio_int = int(precio_final)
-                valor_kg_total = precio_int / kg_int
-                valor_kg_neto = valor_kg_total / 1.19
-                valor_kg_neto_int = int(valor_kg_neto)
+                kg_int = int(kg)
+                precio_bruto_total = int((precio_final))
+                precio_bruto_kg = (precio_bruto_total/kg_int)
+                precio_neto_total = (precio_bruto_total/1.19)
+                precio_neto_kg = (precio_bruto_kg/1.19)
                 nombre_completo = f"{solo_nombre}, {kg} kg"
                 if solo_nombre != 'sin data':
-                    data.append([categoria, nombre_completo, valor_kg_neto_int])
-                    print(f"Categoria: {categoria},Producto: {nombre_completo}, Precio: {valor_kg_neto_int}")
+                    # data.append([categoria, nombre_completo, valor_kg_neto_int])
+                    data.append([categoria, nombre_completo, f'{precio_neto_kg:.0f}', f'{precio_neto_total:.0f}', f'{precio_bruto_kg:.0f}', f'{precio_bruto_total:.0f}'])
+                    print(f"""
+                          Categoria: {categoria},
+                          Producto: {nombre_completo}, 
+                          precio_neto_kg: {precio_neto_kg:.0f}, 
+                          precio_neto_total: {precio_neto_total:.0f}, 
+                          precio_bruto_kg: {precio_bruto_kg:.0f}, 
+                          precio_bruto_total: {precio_bruto_total:.0f}""")
             except (ValueError, ZeroDivisionError) as e:
                 print(f"Error procesando producto: {nombre} - {e}")
                 continue
-
+            
         print(f'Datos extraídos de Agrocomercial: {url}')
     else:
         print(f"Error al acceder a Agrocomercial {url}. Código: {response.status_code}")
@@ -92,7 +99,8 @@ if st.button("🔍 Extraer datos"):
     # === Mostrar resultados en tabs ===
     if all_agro_data:
         st.subheader("Agrocomercial.cl")
-        df = pd.DataFrame(all_agro_data, columns=['Categoria', 'Nombre', 'Precio'])
+        # df = pd.DataFrame(all_agro_data, columns=['Categoria', 'Nombre', 'Precio'])
+        df = pd.DataFrame(all_agro_data, columns=['Categoria', 'nombre_completo', 'precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total'])
         st.dataframe(df, width='stretch', hide_index=True)
     else:
         st.warning("⚠️ No se encontraron datos en Agrocomercial")
