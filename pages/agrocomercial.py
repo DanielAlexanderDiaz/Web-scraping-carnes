@@ -5,6 +5,8 @@ import pandas as pd
 import re
 
 st.title("Agrocomercial")
+st.link_button("Sitio web - Agrocomercial", "https://agrocomercial.cl/")
+st.divider()
 
 def extract_agrocomercial(url):
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'}
@@ -43,18 +45,24 @@ def extract_agrocomercial(url):
                     continue  # Saltar si no hay precio
 
             try:
+                p = r'(?i)\b(CAT-V|Caja|CONGELADO|Vacio|Porc.|Vacuno|de Vacuno|de Cerdo|Porc|Cat V|de Pollo|Cajas de|Porcionada|Porcionado|2.0 aprox|Congelada|Fresca|.)\b\.?\s*'
+                
                 kg_int = int(kg)
                 precio_bruto_total = int((precio_final))
                 precio_bruto_kg = (precio_bruto_total/kg_int)
                 precio_neto_total = (precio_bruto_total/1.19)
                 precio_neto_kg = (precio_bruto_kg/1.19)
-                nombre_completo = f"{solo_nombre}, {kg} kg"
+                nombre_largo = f"{solo_nombre}, {kg} kg"
+                nombre_corto = f"{solo_nombre}"
+                nombre_simple = re.sub(p, ' ', solo_nombre)
                 if solo_nombre != 'sin data':
                     # data.append([categoria, nombre_completo, valor_kg_neto_int])
-                    data.append([categoria, nombre_completo, f'{precio_neto_kg:.0f}', f'{precio_neto_total:.0f}', f'{precio_bruto_kg:.0f}', f'{precio_bruto_total:.0f}'])
+                    data.append([categoria, nombre_largo, nombre_corto, nombre_simple,f'{precio_neto_kg:.0f}', f'{precio_neto_total:.0f}', f'{precio_bruto_kg:.0f}', f'{precio_bruto_total:.0f}'])
                     print(f"""
                           Categoria: {categoria},
-                          Producto: {nombre_completo}, 
+                          nombre_largo: {nombre_largo}, 
+                          nombre_corto: {nombre_corto}, 
+                          nombre_simple: {nombre_simple},
                           precio_neto_kg: {precio_neto_kg:.0f}, 
                           precio_neto_total: {precio_neto_total:.0f}, 
                           precio_bruto_kg: {precio_bruto_kg:.0f}, 
@@ -69,7 +77,7 @@ def extract_agrocomercial(url):
 
     return data
 
-if st.button("🔍 Extraer datos"):
+if st.button("Extraer datos"):
     # === Contar URLs totales ===
     urls_agro = ['vacuno/','aves/pollo/','cerdo/','cordero/','aves/pavo/','vacuno/elaborados/','detalle/']
 
@@ -90,17 +98,18 @@ if st.button("🔍 Extraer datos"):
             print(f"Error en Agrocomercial {clean_url}: {e}")
         current_step += 1
         progress_bar.progress(current_step / total_urls)
-        status_text.text(f"Procesando Agrocomercial... ({current_step}/{total_urls})")
-
+        status_text.text(f"Operacion en proceso. Por favor esperar... ({current_step}/{total_urls})")
+        
     # === Finalizar ===
-    status_text.text("✅ Extracción completada.")
+    barra = status_text.text("Operacion completada. ✅")
     progress_bar.progress(1.0)
 
     # === Mostrar resultados en tabs ===
     if all_agro_data:
-        st.subheader("Agrocomercial.cl")
         # df = pd.DataFrame(all_agro_data, columns=['Categoria', 'Nombre', 'Precio'])
-        df = pd.DataFrame(all_agro_data, columns=['Categoria', 'nombre_completo', 'precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total'])
+        df = pd.DataFrame(all_agro_data, columns=['Categoria', 'nombre_largo', 'nombre_corto', 'nombre_simple', 'precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total'])
         st.dataframe(df, width='stretch', hide_index=True)
     else:
-        st.warning("⚠️ No se encontraron datos en Agrocomercial")
+        st.warning("No se encontraron datos en Agrocomercial. ⚠️")
+        
+    
