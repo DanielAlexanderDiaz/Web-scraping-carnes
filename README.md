@@ -4,13 +4,12 @@
 ### Paginas consultadas
 - [Agrocomercial](https://agrocomercial.cl)
 - [Ariztía](https://www.ariztiaatucasa.cl)
-- [Carnes_Apunto](https://tienda.carnesapunto.cl)
-- [Carnes_Bilbao](https://www.carnesbilbao.cl)
-- [Carnes_Ñubles](https://carnes.cl)
-- [Doña_carne](https://ventasonline.xn--doacarne-e3a.cl)
-- [El_Carnicero](https://elcarnicero.cl)
-- [Frigorífico_Carnes_Premium](https://www.frigorificocarnespremium.com)
+- [Carnes Apunto](https://tienda.carnesapunto.cl)
+- [Carnes Bilbao](https://www.carnesbilbao.cl)
+- [Carnes Ñubles](https://carnes.cl)
+- [Doña carne](https://ventasonline.xn--doacarne-e3a.cl)
+- [El Carnicero](https://elcarnicero.cl)
+- [Frigorífico Carnes Premium](https://www.frigorificocarnespremium.com)
 - [Procarne](https://www.procarne.cl)
-
-
-sitio de la aplicacion [Carnes-CL](https://carnes-cl.streamlit.app/)
+<br>
+Sitio de la aplicacion [Carnes-CL](https://carnes-cl.streamlit.app/)
