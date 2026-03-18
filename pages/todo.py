@@ -6,9 +6,10 @@ import re
 from io import BytesIO
 
 # Configuración de la página
-st.set_page_config(page_title="Precios Competencia", layout="wide")
-st.title("Precios de Carne en Chile")
-st.write("Sitios web donde se extrae la informacion: Agrocomercial, Ariztía, Carnes Apunto, Carnes Bilbao, Carnes Ñubles, Doña carne, El Carnicero, Frigorífico Carnes Premium, Procarne")
+st.set_page_config(page_title="Carnes CL", layout="wide")
+
+st.title("Precios de carnes")
+st.text("En esta pagina se extraen los precios de carnes de distintos sitios web en Chile 'Agrocomercial, Ariztía, Carnes Apunto, Carnes Bilbao, Carnes Ñubles, Doña carne, El Carnicero, Frigorífico Carnes Premium, Procarne'")
 
 
 # AGROCOMERCIAL

@@ -17,6 +17,7 @@ def extract_agrocomercial(url):
         soup = BeautifulSoup(response.text, 'html.parser')
         categoria = soup.find('div', class_='et_pb_heading_container').text
         productos = soup.find_all('li', class_='status-publish')
+        nombre_sitio = 'agrocomercial'
 
         for producto in productos:
             solo_nombre = 'sin data'
@@ -56,7 +57,7 @@ def extract_agrocomercial(url):
                 nombre_corto = f"{solo_nombre}"
                 nombre_simple = re.sub(p, ' ', solo_nombre)
                 if solo_nombre != 'sin data':
-                    data.append([categoria, nombre_largo, nombre_corto, nombre_simple,f'{precio_neto_kg:.0f}', f'{precio_neto_total:.0f}', f'{precio_bruto_kg:.0f}', f'{precio_bruto_total:.0f}'])
+                    data.append([nombre_sitio, categoria, nombre_largo, nombre_corto, nombre_simple,f'{precio_neto_kg:.0f}', f'{precio_neto_total:.0f}', f'{precio_bruto_kg:.0f}', f'{precio_bruto_total:.0f}'])
                     # print(f"""
                     #       Categoria: {categoria},
                     #       nombre_largo: {nombre_largo}, 
@@ -106,7 +107,7 @@ if st.button("Extraer datos"):
     # === Mostrar resultados en tabs ===
     if all_agro_data:
         # df = pd.DataFrame(all_agro_data, columns=['Categoria', 'Nombre', 'Precio'])
-        df = pd.DataFrame(all_agro_data, columns=['Categoria', 'nombre_largo', 'nombre_corto', 'nombre_simple', 'precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total'])
+        df = pd.DataFrame(all_agro_data, columns=['Tienda','Categoria', 'nombre_largo', 'nombre_corto', 'nombre_simple', 'precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total'])
         st.dataframe(df, width='stretch', hide_index=True)
     else:
         st.warning("No se encontraron datos en Agrocomercial. ⚠️")
