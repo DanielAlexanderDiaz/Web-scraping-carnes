@@ -11,37 +11,18 @@ st.title("Agrocomercial")
 st.link_button("Sitio web - Agrocomercial", "https://agrocomercial.cl/")
 st.divider()
 
-if 'df_macro' not in st.session_state:
-    st.session_state.df_macro = None  
-if 'filtro_categoria' not in st.session_state:
-    st.session_state.filtro_categoria = '' 
-if 'filtro_nombre' not in st.session_state:
-    st.session_state.filtro_nombre = ''   
+if 'categoria_filtro' not in st.session_state:
+    st.session_state.categoria_filtro = 'sin categoria'
+if 'df_filtro' not in st.session_state:
+    st.session_state.df_filtro = None
 
-# === FUNCIÓN DE FILTRADO ===
-def aplicar_filtros(df, categoria, nombre):
-    """Filtra el dataframe según los términos ingresados"""
-    if df is None or df.empty:
-        return df
-    
-    df_f = df.copy()
-    
-    if categoria:
-        df_f = df_f[df_f['Categoria'].str.contains(categoria, case=False, na=False)]
-    
-    if nombre:
-        df_f = df_f[df_f['nombre_simple'].str.contains(nombre, case=False, na=False)]
-    
-    return df_f
-
-def extract_agrocomercial(url):
+def extract_agrocomercial(url, categoria='sin categoria'):
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'}
     response = requests.get(url, headers=headers)
     data = []
 
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
-        categoria = soup.find('div', class_='et_pb_heading_container').text
         productos = soup.find_all('li', class_='status-publish')
         nombre_sitio = 'agrocomercial'
 
@@ -82,8 +63,19 @@ def extract_agrocomercial(url):
                 nombre_largo = f"{solo_nombre}, {kg} kg"
                 nombre_corto = f"{solo_nombre}"
                 nombre_simple = re.sub(p, ' ', solo_nombre)
+                
                 if solo_nombre != 'sin data':
-                    data.append([nombre_sitio, categoria, nombre_largo, nombre_corto, nombre_simple,f'{precio_neto_kg:.0f}', f'{precio_neto_total:.0f}', f'{precio_bruto_kg:.0f}', f'{precio_bruto_total:.0f}'])   
+                    data.append([
+                        nombre_sitio,
+                        categoria,
+                        nombre_largo, 
+                        nombre_corto, 
+                        nombre_simple,
+                        precio_neto_kg, 
+                        precio_neto_total, 
+                        precio_bruto_kg, 
+                        precio_bruto_total
+                        ])   
                         
             except (ValueError, ZeroDivisionError) as e:
                 print(f"Error procesando producto: {nombre} - {e}")
@@ -95,8 +87,28 @@ def extract_agrocomercial(url):
 
     return data
 
+with st.container(border=True):
+    
+    filtro_input = st.text_input("Filtrar por categoría", placeholder="vacuno, pollo, cerdo, cordero, pavo ...", value=st.session_state.categoria_filtro)
+    
+    if filtro_input!=st.session_state.categoria_filtro:
+        st.session_state.categoria_filtro = filtro_input
+        
+    if st.button("Limpiar filtro"):
+        st.session_state.categoria_filtro = 'sin categoria'
+        st.rerun() 
+
 if st.button("Extraer datos"):
-    urls_agro = ['vacuno/','aves/pollo/','cerdo/','cordero/','aves/pavo/','vacuno/elaborados/','detalle/']
+    
+    categorias = {
+        'vacuno/':'vacuno',
+        'aves/pollo/':'pollo',
+        'cerdo/':'cerdo',
+        'cordero/':'cordero',
+        'aves/pavo/':'pavo'
+    }
+    
+    urls_agro = list(categorias.keys())
     total_urls = len(urls_agro)
     
     progress_bar = st.progress(0)
@@ -107,8 +119,9 @@ if st.button("Extraer datos"):
     
     for i, url in enumerate(urls_agro):
         clean_url = f"{base_agro}{url.strip()}"
+        categoria = categorias.get(url, 'sin categoria')
         try:
-            all_agro_data.extend(extract_agrocomercial(clean_url))
+            all_agro_data.extend(extract_agrocomercial(clean_url, categoria))
         except Exception as e:
             print(f"Error en Agrocomercial {clean_url}: {e}")
         
@@ -119,50 +132,34 @@ if st.button("Extraer datos"):
     progress_bar.progress(1.0)
     
     if all_agro_data:
-        # Crear dataframe y guardar en session_state
-        df_macro = pd.DataFrame(all_agro_data,columns=['Tienda','Categoria', 'nombre_largo', 'nombre_corto', 'nombre_simple', 'precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total'])
+        df_macro = pd.DataFrame(all_agro_data,columns=['Tienda','Categoria','nombre_largo', 'nombre_corto', 'nombre_simple', 'precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total'])
+        df_limpio = df_macro.drop_duplicates(keep='first')
         
-        st.session_state.df_macro = df_macro  # ✅ Persistir dataframe
-        st.rerun()  # ✅ Refrescar para mostrar filtros y datos
+        columnas_numericas = ['precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total']
+        df_limpio[columnas_numericas] = df_limpio[columnas_numericas].apply(pd.to_numeric, errors='coerce')
+          
+        st.session_state.df_filtro = df_limpio  
+            
     else:
-        st.warning("No se encontraron datos en Agrocomercial. ⚠️")
-
-if st.session_state.df_macro is not None:
+        st.warning("No se encontraron datos en Agrocomercial.")
+        st.session_state.df_filtro = None
+        
+if st.session_state.df_filtro is not None:
+    df = st.session_state.df_filtro.copy()
     
-    with st.container(horizontal=True):
-        categoria_input = st.text_input("Filtrar por Categoría",value=st.session_state.filtro_categoria,placeholder="Ej: Vacuno, Pollo...",key="input_categoria")
-        st.session_state.filtro_categoria = categoria_input
+    filtro = st.session_state.categoria_filtro.strip().lower()
     
-        nombre_input = st.text_input("Filtrar por Nombre", value=st.session_state.filtro_nombre,placeholder="Ej: posta, filete...",key="input_nombre")
-        st.session_state.filtro_nombre = nombre_input
-    
-    df_filtrado = aplicar_filtros(st.session_state.df_macro,st.session_state.filtro_categoria,st.session_state.filtro_nombre)
-    
-    if st.session_state.filtro_categoria or st.session_state.filtro_nombre:
-        st.caption(f"🔹 Filtros activos: Categoría='{st.session_state.filtro_categoria}' | Nombre='{st.session_state.filtro_nombre}' → {len(df_filtrado)} resultados")
-    
-    st.dataframe(df_filtrado.sort_values('precio_neto_kg', ascending=False),hide_index=True)
-    
-    # 🔹 TU GROUBY ORIGINAL (con datos filtrados)
-    productos_categorias = df_filtrado.groupby('Categoria')['Tienda'].count().reset_index(name='Total')
-    st.dataframe(productos_categorias,hide_index=True)
-    
-    st.text(f"Total de productos: {len(df_filtrado)}")
-
-else:
-    st.info("👈 Presiona 'Extraer datos' para comenzar.")
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    if filtro != 'sin categoria':
+        
+        df_limpio = df[df['Categoria'].str.contains(filtro, case=False, na=False)]
+        
+        if len(df_limpio)==0:
+           st.warning(f"⚠️ No se encontraron datos para la categoría: {filtro}")
+           st.info("Intenta con otra categoría")
+        else:
+            st.success(f"✅ Se encontraron {len(df_limpio)} productos para la categoría: {filtro}")
+            df_display = df_limpio 
+    else:
+        df_display = df
+        
+    st.dataframe(df_display.sort_values('precio_neto_kg'), width='stretch', hide_index=True)
