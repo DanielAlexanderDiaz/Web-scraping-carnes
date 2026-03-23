@@ -3,12 +3,13 @@ from bs4 import BeautifulSoup
 import requests
 import pandas as pd
 import re
+from datetime import datetime 
 from io import BytesIO
 
-# Configuración de la página
-st.set_page_config(page_title="Carnes CL", layout="wide")
+st.set_page_config(page_title="Carnes CL", layout="wide", page_icon="🥩")
 
-st.title("Precios de carnes")
+fecha = datetime.now()
+st.title(f"Precios de carnes {fecha:%d/%m/%Y}")
 st.text("En esta pagina se extraen los precios de carnes de distintos sitios web en Chile 'Agrocomercial, Ariztía, Carnes Apunto, Carnes Bilbao, Carnes Ñubles, Doña carne, El Carnicero, Frigorífico Carnes Premium, Procarne'")
 
 

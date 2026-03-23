@@ -5,16 +5,22 @@ import pandas as pd
 import re
 from math import ceil
 
-st.set_page_config(layout="wide")
+st.set_page_config(page_title="Carnes CL", layout="wide", page_icon="🥩")
 
 st.title("Agrocomercial")
 st.link_button("Sitio web - Agrocomercial", "https://agrocomercial.cl/")
 st.divider()
 
-if 'categoria_filtro' not in st.session_state:
-    st.session_state.categoria_filtro = 'sin categoria'
-if 'df_filtro' not in st.session_state:
-    st.session_state.df_filtro = None
+state = st.session_state
+
+if 'categoria' not in state:
+    state.categoria = []
+if 'nombre' not in state:
+    state.nombre = ""  
+if 'tienda' not in state:
+    state.tienda = []
+if 'df_filtro' not in state:
+    state.df_filtro = None
 
 def extract_agrocomercial(url, categoria='sin categoria'):
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'}
@@ -89,14 +95,19 @@ def extract_agrocomercial(url, categoria='sin categoria'):
 
 with st.container(border=True):
     
-    filtro_input = st.text_input("Filtrar por categoría", placeholder="vacuno, pollo, cerdo, cordero, pavo ...", value=st.session_state.categoria_filtro)
-    
-    if filtro_input!=st.session_state.categoria_filtro:
-        st.session_state.categoria_filtro = filtro_input
-        
-    if st.button("Limpiar filtro"):
-        st.session_state.categoria_filtro = 'sin categoria'
-        st.rerun() 
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        nombre = st.text_input("Nombre del producto", value=state.nombre)
+        if nombre!=state.nombre:
+            state.nombre = nombre   
+    with c2:
+        categoria = st.multiselect("Categorias", ['vacuno', 'pollo', 'cerdo', 'cordero', 'pavo']) 
+        if categoria!=state.categoria:
+            state.categoria = categoria
+    with c3:
+        tienda = st.multiselect("Tiendas", ['agrocomercial'])
+        if tienda!=state.tienda:
+            state.tienda = tienda
 
 if st.button("Extraer datos"):
     
@@ -128,7 +139,7 @@ if st.button("Extraer datos"):
         progress_bar.progress((i + 1) / total_urls)
         status_text.text(f"Operacion en proceso... ({i + 1}/{total_urls})")
     
-    status_text.text("Operacion completada. ✅")
+    status_text.text("Operacion completada.")
     progress_bar.progress(1.0)
     
     if all_agro_data:
@@ -138,28 +149,40 @@ if st.button("Extraer datos"):
         columnas_numericas = ['precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total']
         df_limpio[columnas_numericas] = df_limpio[columnas_numericas].apply(pd.to_numeric, errors='coerce')
           
-        st.session_state.df_filtro = df_limpio  
+        state.df_filtro = df_limpio  
             
     else:
         st.warning("No se encontraron datos en Agrocomercial.")
-        st.session_state.df_filtro = None
+        state.df_filtro = None
         
-if st.session_state.df_filtro is not None:
-    df = st.session_state.df_filtro.copy()
+if state.df_filtro is not None:
+    df = state.df_filtro.copy()
     
-    filtro = st.session_state.categoria_filtro.strip().lower()
+    filtro_categoria = state.categoria  
+    filtro_nombre = state.nombre.strip()
+    filtro_tienda = state.tienda 
     
-    if filtro != 'sin categoria':
+    df_display = df 
+    
+    if filtro_nombre:
+        mask_nombre = (
+            df['nombre_simple'].str.contains(filtro_nombre, case=False, na=False) |
+            df['nombre_corto'].str.contains(filtro_nombre, case=False, na=False) |
+            df['nombre_largo'].str.contains(filtro_nombre, case=False, na=False)
+        )
+        df_display = df_display[mask_nombre]
+    
+    if filtro_categoria and len(filtro_categoria) > 0:
+        df_display = df_display[df_display['Categoria'].isin(filtro_categoria)]
         
-        df_limpio = df[df['Categoria'].str.contains(filtro, case=False, na=False)]
-        
-        if len(df_limpio)==0:
-           st.warning(f"⚠️ No se encontraron datos para la categoría: {filtro}")
-           st.info("Intenta con otra categoría")
-        else:
-            st.success(f"✅ Se encontraron {len(df_limpio)} productos para la categoría: {filtro}")
-            df_display = df_limpio 
+    if filtro_tienda and len(filtro_tienda) > 0:
+        df_display = df_display[df_display['Tienda'].isin(filtro_tienda)]
+    
+    if not df_display.empty:
+        st.dataframe(
+            df_display.sort_values('precio_neto_kg', ascending=True),
+            width='stretch',
+            hide_index=True
+        )
     else:
-        df_display = df
-        
-    st.dataframe(df_display.sort_values('precio_neto_kg'), width='stretch', hide_index=True)
+        st.warning("No se encontraron productos con los filtros seleccionados", icon="⚠️")
