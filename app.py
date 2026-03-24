@@ -6,6 +6,7 @@ pages = {
     ],
     "Sitios web": [
         st.Page("pages/agrocomercial.py", title="Agrocomercial"),
+        st.Page("pages/ariztia.py", title="ariztia"),
     ]
 }
 

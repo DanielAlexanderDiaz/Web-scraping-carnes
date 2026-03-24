@@ -32,7 +32,7 @@ def extract_agrocomercial(url, categoria='sin categoria'):
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
         productos = soup.find_all('li', class_='status-publish')
-        nombre_sitio = 'agrocomercial'
+        # nombre_sitio = 'agrocomercial'
 
         for producto in productos:
             solo_nombre = 'sin data'
@@ -59,22 +59,22 @@ def extract_agrocomercial(url, categoria='sin categoria'):
                     precio_final = span_precio.get_text(strip=True).replace('$', '').replace('.', '')
                 else:
                     continue  # Saltar si no hay precio
+                
+            p = r'(?i)\b(CAT-V|Caja|CONGELADO|Vacio|Porc.|Vacuno|de Vacuno|de Cerdo|Porc|Cat V|de Pollo|Cajas de|Porcionada|Porcionado|2.0 aprox|Congelada|Fresca|.)\b\.?\s*'
+                
+            kg_int = int(kg)
+            precio_bruto_total = int((precio_final))
+            precio_bruto_kg = ceil(precio_bruto_total/kg_int)
+            precio_neto_total = ceil(precio_bruto_total/1.19)
+            precio_neto_kg = ceil(precio_bruto_kg/1.19)
+            nombre_largo = f"{solo_nombre}, {kg} kg"
+            nombre_corto = f"{solo_nombre}"
+            nombre_simple = re.sub(p, ' ', solo_nombre)
 
-            try:
-                p = r'(?i)\b(CAT-V|Caja|CONGELADO|Vacio|Porc.|Vacuno|de Vacuno|de Cerdo|Porc|Cat V|de Pollo|Cajas de|Porcionada|Porcionado|2.0 aprox|Congelada|Fresca|.)\b\.?\s*'
-                
-                kg_int = int(kg)
-                precio_bruto_total = int((precio_final))
-                precio_bruto_kg = ceil(precio_bruto_total/kg_int)
-                precio_neto_total = ceil(precio_bruto_total/1.19)
-                precio_neto_kg = ceil(precio_bruto_kg/1.19)
-                nombre_largo = f"{solo_nombre}, {kg} kg"
-                nombre_corto = f"{solo_nombre}"
-                nombre_simple = re.sub(p, ' ', solo_nombre)
-                
+            try:    
                 if solo_nombre != 'sin data':
                     data.append([
-                        nombre_sitio,
+                        nombre_tienda,
                         categoria,
                         nombre_largo, 
                         nombre_corto, 
