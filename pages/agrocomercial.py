@@ -11,6 +11,8 @@ st.title("Agrocomercial")
 st.link_button("Sitio web - Agrocomercial", "https://agrocomercial.cl/")
 st.divider()
 
+
+nombre_tienda = 'agrocomercial'
 state = st.session_state
 
 if 'categoria' not in state:
@@ -134,12 +136,12 @@ if st.button("Extraer datos"):
         try:
             all_agro_data.extend(extract_agrocomercial(clean_url, categoria))
         except Exception as e:
-            print(f"Error en Agrocomercial {clean_url}: {e}")
+            print(f"Error en {nombre_tienda} {clean_url}: {e}")
         
         progress_bar.progress((i + 1) / total_urls)
-        status_text.text(f"Operacion en proceso... ({i + 1}/{total_urls})")
+        status_text.text(f"{nombre_tienda} en proceso... ({i + 1}/{total_urls})")
     
-    status_text.text("Operacion completada.")
+    status_text.text(f"Operacion completada en {nombre_tienda}")
     progress_bar.progress(1.0)
     
     if all_agro_data:
@@ -152,7 +154,7 @@ if st.button("Extraer datos"):
         state.df_filtro = df_limpio  
             
     else:
-        st.warning("No se encontraron datos en Agrocomercial.")
+        st.warning(f"No se encontraron datos en {nombre_tienda}")
         state.df_filtro = None
         
 if state.df_filtro is not None:
