@@ -1,10 +1,6 @@
 import streamlit as st
-from bs4 import BeautifulSoup
-import requests
 import pandas as pd
-import re
 from datetime import datetime 
-from io import BytesIO
 import util.agrocomercial as agrocomercial
 import util.ariztia as ariztia
 
@@ -33,7 +29,7 @@ with st.container(border=True):
         if nombre!=state.nombre:
             state.nombre = nombre   
     with c2:
-        categoria = st.multiselect("Categorias", ['vacuno', 'pollo', 'cerdo', 'cordero', 'pavo']) 
+        categoria = st.multiselect("Categorias", ['vacuno', 'pollo', 'cerdo', 'cordero', 'pavo','otros']) 
         if categoria!=state.categoria:
             state.categoria = categoria
     with c3:
@@ -51,8 +47,11 @@ if st.button("Extraer datos"):
     # 1. PROCESAR AGROCOMERCIAL
     # ========================
     url_agro = {
-        'vacuno/':'vacuno', 'aves/pollo/':'pollo', 'cerdo/':'cerdo',
-        'cordero/':'cordero', 'aves/pavo/':'pavo'
+        'vacuno/':'vacuno', 
+        'aves/pollo/':'pollo', 
+        'cerdo/':'cerdo',
+        'cordero/':'cordero', 
+        'aves/pavo/':'pavo'
     }
     urls_agro = list(url_agro.keys())
     total_urls = len(urls_agro)
@@ -84,14 +83,11 @@ if st.button("Extraer datos"):
     # 2. PROCESAR ARIZTIA
     # ========================
     url_ariz = {
-        'pollo.html':'pollo', 'pollo.html?p=2':'pollo', 'pollo.html?p=3':'pollo',
-        'pollo.html?p=4':'pollo', 'pollo.html?p=5':'pollo', 'pollo.html?p=6':'pollo',
-        'pavo.html':'pavo', 'pavo.html?p=2':'pavo', 'cerdo.html':'cerdo',
-        'vacuno.html':'vacuno', 'vacuno.html?p=2':'vacuno',
-        'congelados/hamburguesas.html':'congelados',
-        'congelados/productos-churrasco-lomito-y-bistec.html':'congelados',
-        'congelados/nuggets-y-apanados.html':'congelados',
+        'pollo.html':'pollo', 'pollo.html?p=2':'pollo', 'pollo.html?p=3':'pollo','pollo.html?p=4':'pollo', 'pollo.html?p=5':'pollo', 'pollo.html?p=6':'pollo',
+        'pavo.html':'pavo', 'pavo.html?p=2':'pavo', 'cerdo.html':'cerdo','vacuno.html':'vacuno', 'vacuno.html?p=2':'vacuno','congelados/hamburguesas.html':'otros',
+        'congelados/productos-churrasco-lomito-y-bistec.html':'otros','congelados/nuggets-y-apanados.html':'otros',
     }
+    
     urls_ariz = list(url_ariz.keys())
     total_urls = len(urls_ariz)
     
