@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime 
 import util.agrocomercial as agrocomercial
 import util.ariztia as ariztia
+import util.carnesapunto as carnesapunto
 
 st.set_page_config(page_title="Carnes CL", layout="wide", page_icon="🥩")
 
@@ -33,7 +34,7 @@ with st.container(border=True):
         if categoria!=state.categoria:
             state.categoria = categoria
     with c3:
-        tienda = st.multiselect("Tiendas", ['agrocomercial','ariztia'])
+        tienda = st.multiselect("Tiendas", ['agrocomercial','ariztia','carnes Apunto'])
         if tienda!=state.tienda:
             state.tienda = tienda
        
@@ -43,9 +44,9 @@ if st.button("Extraer datos"):
     # Lista para acumular todos los DataFrames limpios
     dfs_combinados = []
     
-    # ========================
-    # 1. PROCESAR AGROCOMERCIAL
-    # ========================
+    # ======================
+    # PROCESAR AGROCOMERCIAL
+    # ======================
     url_agro = {
         'vacuno/':'vacuno', 
         'aves/pollo/':'pollo', 
@@ -79,9 +80,9 @@ if st.button("Extraer datos"):
         df_agro = pd.DataFrame(all_agro_data, columns=['Tienda','Categoria','nombre_largo', 'nombre_corto', 'nombre_simple', 'precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total'])
         dfs_combinados.append(df_agro)
     
-    # ========================
-    # 2. PROCESAR ARIZTIA
-    # ========================
+    # ================
+    # PROCESAR ARIZTIA
+    # ================
     url_ariz = {
         'pollo.html':'pollo', 'pollo.html?p=2':'pollo', 'pollo.html?p=3':'pollo','pollo.html?p=4':'pollo', 'pollo.html?p=5':'pollo', 'pollo.html?p=6':'pollo',
         'pavo.html':'pavo', 'pavo.html?p=2':'pavo', 'cerdo.html':'cerdo','vacuno.html':'vacuno', 'vacuno.html?p=2':'vacuno','congelados/hamburguesas.html':'otros',
@@ -114,6 +115,51 @@ if st.button("Extraer datos"):
         df_ariz = pd.DataFrame(all_ariz_data, columns=['Tienda','Categoria','nombre_largo', 'nombre_corto', 'nombre_simple', 'precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total'])
         dfs_combinados.append(df_ariz)
     
+    # ======================
+    # PROCESAR CARNES APUNTO
+    # ======================
+    url_carnes_apunto = {
+        'filete-bife':'vacuno','lomo-liso-c-hueso-chuleton-a-punto':'vacuno','entrecot-a-punto':'vacuno','box-edition-lomo-liso-bife':'vacuno','box-edition-medallon-de-filete':'vacuno',
+        'box-edition-tomahawk':'vacuno','box-edition-lomo-vetado-bife':'vacuno','hamburguesa-chuck-roll':'vacuno','hamburguesa-brisket':'vacuno','mollejas-a-punto':'vacuno',
+        'chunchules':'vacuno','lengua-a-punto':'vacuno','criadillas-de-vacuno':'vacuno','panita-de-vacuno':'vacuno','ubres-de-vacuno-a-punto':'vacuno','rinones':'vacuno',
+        'churrasco-a-punto-2':'vacuno','hueso-tuetano-a-punto':'vacuno','rabo-cola-de-vacuno':'vacuno','asado-de-tira-criollito-a-punto-2':'vacuno','posta-negra-a-punto-congelado':'vacuno',
+        'corazon-de-vacuno-a-punto':'vacuno','pata-de-vacuno-a-punto':'vacuno','estomaguillo':'vacuno','asado-de-tira-criollo-a-punto':'vacuno','tartaro-a-punto':'vacuno',
+        'french-rack-de-tomahawk-2':'vacuno','garron-de-osobuco-prime-1-5-kg':'vacuno','punta-de-ganso-a-punto':'vacuno','lomo-vetado-entero':'vacuno','lomo-vetado-porcionado-a-punto':'vacuno',
+        'lomo-liso-porcionado-a-punto':'vacuno','lomo-vetado-mi-bife':'vacuno','filete-a-punto':'vacuno','punta-picana-a-punto':'vacuno','punta-paleta-flat-iron-a-punto':'vacuno',
+        'plateada-a-punto':'vacuno','asiento-a-punto':'vacuno','liso-bife-350-grs-a-punto':'vacuno','filete-importado-ft':'vacuno','arrachera-1-kg-aprox':'vacuno',
+        'pollo-ganso-a-punto':'vacuno','lomo-liso-a-punto':'vacuno','churrasco-fundo-sur-120-grs':'vacuno',
+        'baby-back-ribs-curacaribs':'cerdo','pulled-pork':'cerdo','baby-back-ribs-campo-noble':'cerdo','costillar-de-cerdo-campo-noble':'cerdo','malaya-de-cerdo':'cerdo',
+        'trutro-corto-granja-magdalena':'pollo','trutro-largo-granja-magdalena':'pollo','pechuga-deshuesada-800grs-granja-magdalena':'pollo','milanesa-de-pollo-familiar-1-kg':'pollo',
+        'pollo-ahumado':'pollo','filetito-de-pollo-800grs-granja-magdalena':'pollo','panita-de-pollo-500-grs-aprox':'pollo','uprema-de-pollo-familiar-in-bocca':'pollo','pollo-entero-1-8-kg-aprox':'pollo',
+        'chuletas-francesas-de-cordero-simunovic':'cordero','pierna-de-cordero-simunovic':'cordero','chuleta-parrillera-de-cordero-simunovic-2':'cordero','criadillas-de-cordero':'cordero',
+    }
+    
+    urls_apunto = list(url_carnes_apunto.keys())
+    total_urls = len(urls_apunto)
+    
+    progress_bar = st.progress(0)
+    status_text = st.empty()
+    base_apunto = 'https://tienda.carnesapunto.cl/products/'
+    all_apunto_data = []
+
+    for i, url in enumerate(urls_apunto):
+        clean_url = f"{base_apunto}{url.strip()}"
+        categoria = url_carnes_apunto.get(url, 'sin categoria')
+        try:
+            all_apunto_data.extend(carnesapunto.extract_carnes_apunto(clean_url, categoria))
+        except Exception as e:
+            print(f"Error en agrocomercial {clean_url}: {e}")
+        progress_bar.progress((i + 1) / total_urls)
+        status_text.text(f"carnes apunto en proceso... ({i + 1}/{total_urls})")
+    
+    status_text.text(f"Operación completada en carnes apunto")
+    progress_bar.progress(1.0)
+    
+    # Procesar DataFrame de carne a punto
+    if all_apunto_data:
+        df_apunto = pd.DataFrame(all_apunto_data, columns=['Tienda','Categoria','nombre_largo', 'nombre_corto', 'nombre_simple', 'precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total'])
+        dfs_combinados.append(df_apunto)
+        
     # ========================
     # 3. COMBINAR Y LIMPIAR TODOS LOS DATOS
     # ========================
