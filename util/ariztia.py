@@ -1,22 +1,11 @@
-import streamlit as st
 from bs4 import BeautifulSoup
 import requests
-import pandas as pd
 import re
-from math import ceil
-
-st.set_page_config(page_title="Carnes CL", layout="wide", page_icon="🥩")
-
-st.title("Ariztía")
-st.link_button("Sitio web - ariztia", "https://www.ariztiaatucasa.cl/")
-st.divider()
-
-nombre_tienda = 'ariztia'
-
 
 def extract_ariztia(url, categoria='sin categoria'):
     response = requests.get(url)
     data = []
+    nombre_tienda = 'ariztia'
     
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -91,59 +80,59 @@ def extract_ariztia(url, categoria='sin categoria'):
 
     return data
 
-if st.button("Extraer datos"):
+# if st.button("Extraer datos"):
     
-    categorias = {
-        'pollo.html':'pollo',
-        'pollo.html?p=2':'pollo',
-        'pollo.html?p=3':'pollo',
-        'pollo.html?p=4':'pollo',
-        'pollo.html?p=5':'pollo',
-        'pollo.html?p=6':'pollo',
-        'pavo.html':'pavo',
-        'pavo.html?p=2':'pavo',
-        'cerdo.html':'cerdo',
-        'vacuno.html':'vacuno',
-        'vacuno.html?p=2':'vacuno',
-        'congelados/hamburguesas.html':'congelados',
-        'congelados/productos-churrasco-lomito-y-bistec.html':'congelados',
-        'congelados/nuggets-y-apanados.html':'congelados',
-    }
+#     categorias = {
+#         'pollo.html':'pollo',
+#         'pollo.html?p=2':'pollo',
+#         'pollo.html?p=3':'pollo',
+#         'pollo.html?p=4':'pollo',
+#         'pollo.html?p=5':'pollo',
+#         'pollo.html?p=6':'pollo',
+#         'pavo.html':'pavo',
+#         'pavo.html?p=2':'pavo',
+#         'cerdo.html':'cerdo',
+#         'vacuno.html':'vacuno',
+#         'vacuno.html?p=2':'vacuno',
+#         'congelados/hamburguesas.html':'congelados',
+#         'congelados/productos-churrasco-lomito-y-bistec.html':'congelados',
+#         'congelados/nuggets-y-apanados.html':'congelados',
+#     }
     
-    urls_agro = list(categorias.keys())
-    total_urls = len(urls_agro)
+#     urls_agro = list(categorias.keys())
+#     total_urls = len(urls_agro)
     
-    progress_bar = st.progress(0)
-    status_text = st.empty()
+#     progress_bar = st.progress(0)
+#     status_text = st.empty()
     
-    base_agro = 'https://www.ariztiaatucasa.cl/'
-    all_agro_data = []
+#     base_agro = 'https://www.ariztiaatucasa.cl/'
+#     all_agro_data = []
     
-    for i, url in enumerate(urls_agro):
-        clean_url = f"{base_agro}{url.strip()}"
-        categoria = categorias.get(url, 'sin categoria')
-        try:
-            all_agro_data.extend(extract_ariztia(clean_url, categoria))
-        except Exception as e:
-            print(f"Error en {nombre_tienda} {clean_url}: {e}")
+#     for i, url in enumerate(urls_agro):
+#         clean_url = f"{base_agro}{url.strip()}"
+#         categoria = categorias.get(url, 'sin categoria')
+#         try:
+#             all_agro_data.extend(extract_ariztia(clean_url, categoria))
+#         except Exception as e:
+#             print(f"Error en {nombre_tienda} {clean_url}: {e}")
         
-        progress_bar.progress((i + 1) / total_urls)
-        status_text.text(f"{nombre_tienda} en proceso... ({i + 1}/{total_urls})")
+#         progress_bar.progress((i + 1) / total_urls)
+#         status_text.text(f"{nombre_tienda} en proceso... ({i + 1}/{total_urls})")
     
-    status_text.text(f"Operacion completada en {nombre_tienda}")
-    progress_bar.progress(1.0)
+#     status_text.text(f"Operacion completada en {nombre_tienda}")
+#     progress_bar.progress(1.0)
     
-    if all_agro_data:
-        df_macro = pd.DataFrame(all_agro_data,columns=['Tienda','Categoria','nombre_largo', 'nombre_corto', 'nombre_simple', 'precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total'])
-        df_limpio = df_macro.drop_duplicates(keep='first')
+#     if all_agro_data:
+#         df_macro = pd.DataFrame(all_agro_data,columns=['Tienda','Categoria','nombre_largo', 'nombre_corto', 'nombre_simple', 'precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total'])
+#         df_limpio = df_macro.drop_duplicates(keep='first')
         
-        columnas_numericas = ['precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total']
-        df_limpio[columnas_numericas] = df_limpio[columnas_numericas].apply(pd.to_numeric, errors='coerce')
+#         columnas_numericas = ['precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total']
+#         df_limpio[columnas_numericas] = df_limpio[columnas_numericas].apply(pd.to_numeric, errors='coerce')
           
-        # state.df_filtro = df_limpio  
+#         # state.df_filtro = df_limpio  
         
-        st.dataframe(df_limpio)
+#         st.dataframe(df_limpio)
             
-    else:
-        st.warning(f"No se encontraron datos en {nombre_tienda}")
-        # state.df_filtro = None
+#     else:
+#         st.warning(f"No se encontraron datos en {nombre_tienda}")
+#         # state.df_filtro = None
