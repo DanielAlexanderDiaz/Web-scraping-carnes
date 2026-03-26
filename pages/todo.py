@@ -5,6 +5,7 @@ import util.agrocomercial as agrocomercial
 import util.ariztia as ariztia
 import util.carnesapunto as carnesapunto
 import util.carnesnubles as carnesnubles
+import util.donacarne as donacarne
 
 st.set_page_config(page_title="Carnes CL", layout="wide", page_icon="🥩")
 
@@ -35,7 +36,7 @@ with st.container(border=True):
         if categoria!=state.categoria:
             state.categoria = categoria
     with c3:
-        tienda = st.multiselect("Tiendas", ['agrocomercial','ariztia','carnes Apunto','carnes nubles'])
+        tienda = st.multiselect("Tiendas", ['agrocomercial','ariztia','carnes Apunto','carnes nubles','dona carne'])
         if tienda!=state.tienda:
             state.tienda = tienda
        
@@ -197,6 +198,47 @@ if st.button("Extraer datos"):
         df_nubles = pd.DataFrame(all_nubles_data, columns=['Tienda','Categoria','nombre_largo', 'nombre_corto', 'nombre_simple', 'precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total'])
         dfs_combinados.append(df_nubles)
         
+    # ======================
+    # PROCESAR DOÑA CARNE
+    # ======================  
+    url_donacarne = {
+    'vacuno':'vacuno',
+    'vacuno?page=2':'vacuno',
+    'vacuno?page=3':'vacuno',
+    'vacuno?page=4':'vacuno',
+    'vacuno?page=5':'vacuno',
+    'ave':'pollo',
+    'ave?page=2':'pollo',
+    'cerdo':'cerdo',
+    'cerdo?page=2':'cerdo',
+    'miscelaneos':'otros',
+    }
+    
+    progress_bar = st.progress(0)
+    status_text = st.empty()
+        
+    urls_donacarne = list(url_donacarne.keys())
+    total_urls = len(urls_donacarne)
+
+    base_donacarne = 'https://ventasonline.xn--doacarne-e3a.cl/collections/'
+    all_donacarne_data = []
+
+    for i, url in enumerate(urls_donacarne):
+        clean_url = f"{base_donacarne}{url.strip()}"
+        categoria = url_donacarne.get(url, 'sin categoria')
+        try:
+            all_donacarne_data.extend(donacarne.extract_donacarne(clean_url, categoria))
+        except Exception as e:
+            print(f"Error en dona carne {clean_url}: {e}")
+            
+    status_text.text(f"Operación completada en dona carne")
+    progress_bar.progress(1.0)     
+    
+    # Procesar DataFrame de dona carne
+    if all_donacarne_data:
+        df_donacarne = pd.DataFrame(all_donacarne_data, columns=['Tienda','Categoria','nombre_largo', 'nombre_corto', 'nombre_simple', 'precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total'])
+        dfs_combinados.append(df_donacarne)
+    
     # ========================
     # 3. COMBINAR Y LIMPIAR TODOS LOS DATOS
     # ========================

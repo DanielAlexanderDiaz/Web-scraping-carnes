@@ -80,26 +80,7 @@ def extract_agrocomercial(url, categoria='sin categoria'):
 
 
 #Codigo de todo.py#
-# # DONACARNE
-# def extract_donacarne(url):
-#     response = requests.get(url)
-#     data = []
 
-#     if response.status_code == 200:
-#         soup = BeautifulSoup(response.text, 'html.parser')
-
-#         productos = soup.find_all('div', class_='product-border')
-
-#         for producto in productos:
-#             nombre = producto.find('div', class_='product-title').text.strip()
-#             precio = producto.find('div', class_='product-price').text
-#             data.append([nombre,precio])
-#             # print(nombre, precio)
-#             print(f"Datos extraidos de {url}")
-#     else:
-#         print(f"Error al acceder a la página {url}. Código de estado: {response.status_code}")
-
-#     return data
 # # ELCARNICERO
 # def extract_elcarnicero(url):
 #     response = requests.get(url)
@@ -197,10 +178,7 @@ def extract_agrocomercial(url, categoria='sin categoria'):
     #     'vacuno/','vacuno/page/2/','vacuno/page/3/','vacuno/page/4/','cerdo/','cerdo/page/2/','pollos/',
     #     'beefeschurrascos/','beefeschurrascos/page/2/','subproductos/','cecinas/','pavos/','hamburguesas/'
     # ]
-    # urls_donacarne = [
-    #     'vacuno','vacuno?page=2&phcursor=eyJhbGciOiJIUzI1NiJ9.eyJzayI6InBvc2l0aW9uIiwic3YiOjI1LCJkIjoiZiIsInVpZCI6MzE1Mzk0Nzk5MzcxMDUsImwiOjI0LCJvIjowLCJyIjoiQ0RQIiwidiI6MSwicCI6Mn0.c_Hr_E7l3dLxoiEtsB5vgyRGXNsf8hbJTsx0IbeAKfo',
-    #     'vacuno?page=3&phcursor=eyJhbGciOiJIUzI1NiJ9.eyJzayI6InBvc2l0aW9uIiwic3YiOjYyLCJkIjoiZiIsInVpZCI6MzI5MTQ0NzYwNzMwNDEsImwiOjI0LCJvIjowLCJyIjoiQ0RQIiwidiI6MSwicCI6M30.xMnUqFnjDiN7CZC-1tgn0Pqg5wqTDv1xTLQAzcr2wmM','ave','cerdo'
-    # ]
+    
     # urls_elcarnicero = [
     #     'vacuno.html','cerdo-nacional-o-importado.html','pollo-nacional-o-importado.html','congelados.html',
     #     'todo-para-el-asado/cortes-para-parrilla.html','todo-para-el-asado/hamburguesas.html','pack.html','ofertas.html','seleccion.html'
@@ -234,18 +212,7 @@ def extract_agrocomercial(url, categoria='sin categoria'):
     #     progress_bar.progress(current_step / total_urls)
     #     status_text.text(f"Procesando Carnes Bilbao... ({current_step}/{total_urls})")
 
-    # # === Doñacarne ===
-    # base_donacarne = 'https://ventasonline.xn--doacarne-e3a.cl/collections/'
-    # all_donacarne_data = []
-    # for url in urls_donacarne:
-    #     clean_url = f"{base_donacarne}{url.strip()}"
-    #     try:
-    #         all_donacarne_data.extend(extract_donacarne(clean_url))
-    #     except Exception as e:
-    #         print(f"Error en Doñacarne {clean_url}: {e}")
-    #     current_step += 1
-    #     progress_bar.progress(current_step / total_urls)
-    #     status_text.text(f"Procesando doña carne... ({current_step}/{total_urls})")
+
 
     # # === El Carnicero ===
     # base_carnicero = 'https://elcarnicero.cl/'
