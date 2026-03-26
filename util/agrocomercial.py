@@ -80,120 +80,6 @@ def extract_agrocomercial(url, categoria='sin categoria'):
 
 
 #Codigo de todo.py#
-
-
-# # CARNES APUNTO
-# def extract_carnes_apunto(url):
-#     response = requests.get(url)
-#     data = []
-
-#     if response.status_code == 200:
-#         soup = BeautifulSoup(response.text, 'html.parser')
-
-#         nombre = soup.find('span', class_='product-model').text
-#         precio = soup.find('span',class_='bootic-price').text
-#         match = re.search(r'\$(\d+\.*\d+)',precio)
-#         if match:
-#             precio = match.group(1).replace('.', '')
-#             precio = int(precio)
-#         else:
-#             precio = 0
-
-#         div_descripcion = soup.find('div', class_='product-description only-description')
-
-#         if div_descripcion is None:
-#             precio_kg = 0
-#         else:
-#             texto = div_descripcion.get_text(strip=True)
-#             numeros = re.findall(r'\d+\.?\d*', texto)
-#             precio_kg = 0
-#             for num in numeros:
-#                 if len(num)>3:
-#                     precio_kg = num
-#                     match = re.search(r'\$(\d+\.*\d+)',precio_kg)
-#                     if match:
-#                         precio_kg = match.group(1).replace('.', '')
-#                         precio_kg = int(precio_kg)
-                    
-
-#         data.append([nombre, precio, precio_kg])
-#         # print(f'{nombre},{precio},{precio_kg}')
-#         print(f'Datos extraidos de {url}')
-#     else:
-#         print(f"Error al acceder a la página {url}. Código de estado: {response.status_code}")
-        
-#     return data
-# # CARNES BILBAO
-# def extract_carnes_bilbao(url):
-#     response = requests.get(url)
-#     data = []
-
-#     if response.status_code == 200:
-#         soup = BeautifulSoup(response.text, 'html.parser')
-#         productos = soup.find_all('li', class_='product')
-
-#         for producto in productos:
-#             nombre_tag = producto.find('h2', class_='woocommerce-loop-product__title')
-#             if not nombre_tag:
-#                 continue
-#             nombre = nombre_tag.get_text(strip=True)
-
-#             precio_tag = producto.find('span', class_='woocommerce-Price-amount amount')
-#             if not precio_tag:
-#                 print(f"Producto sin precio: {nombre}")
-#                 continue  # Saltar si no hay precio
-
-#             texto_precio = precio_tag.get_text(strip=True)
-#             # Eliminar símbolo $ y separadores de miles (.)
-#             precio_limpio = texto_precio.replace('$', '').replace('.', '')
-            
-#             try:
-#                 valor_numerico = int(precio_limpio)
-#             except ValueError:
-#                 print(f"Formato de precio inválido en: {nombre} → '{texto_precio}'")
-#                 continue
-
-#             data.append([nombre, valor_numerico])
-#             print(f"Datos extraídos de {url}: {nombre} - ${valor_numerico}")
-
-#     else:
-#         print(f"Error al acceder a la página {url}. Código de estado: {response.status_code}")
-
-#     return data
-# # CARNES ÑUBLES
-# def extract_carnes_nubles(url):
-#     response = requests.get(url)
-#     data = []
-#     if response.status_code == 200:
-#         soup = BeautifulSoup(response.text, 'html.parser')
-
-#         produtos = soup.find_all('div', class_='yv-product-information')
-
-#         for producto in produtos:
-#             nombre = producto.find('a', class_='yv-product-title').text
-#             nombre_new = nombre.split("(", 1)[0].strip()
-
-#             precio = producto.find('span', class_='yv-product-price').text
-
-#             precio_ = re.search(r'\$(\d+\.*\d+)', precio)
-#             if precio_:
-#                 precio_new = precio_.group(1).replace('.','')
-#                 precio_final = int(precio_new)
-
-#             precio_kg = 0
-#             precio_new_kg = 0
-#             match = re.search(r'\$(\d+\.\d+|\d+)', nombre)
-#             if match:
-#                 precio_kg = match.group(1).replace('.','')
-#                 precio_new_kg = int(precio_kg)
-
-#             # print(nombre_new,precio_new,precio_kg)
-#             data.append((nombre_new, precio_final, precio_new_kg))
-#             print(f"Datos extraidos de {url}")
-#     else:
-#         print(f"Error al acceder a {url}: Código {response.status_code}")
-
-#     return data
 # # DONACARNE
 # def extract_donacarne(url):
 #     response = requests.get(url)
@@ -303,99 +189,13 @@ def extract_agrocomercial(url, categoria='sin categoria'):
 #         print(f"Error al acceder a {url}: Código {response.status_code}")
 
 #     return data
-# def save_to_excel(agro_data, ariztia_data,carnes_apunto_data,carnes_bilbao_data,carnes_nubles_data,donacarne_data,elcarnicero_data,frigorifico_data,procarne_data):
-#     output = BytesIO()
-    
-#     with pd.ExcelWriter(output, engine='openpyxl') as writer:
-#         if agro_data:
-#             df_agro = pd.DataFrame(agro_data, columns=['Producto', 'Precio x kg neto'])
-#             df_agro.to_excel(writer, sheet_name='Agrocomercial', index=False)
-#         else:
-#             print("No hay datos de Agrocomercial para guardar.")
 
-#         if ariztia_data:
-#             df_ariztia = pd.DataFrame(ariztia_data, columns=['Producto', 'neto_x_kg', 'um'])
-#             df_ariztia.to_excel(writer, sheet_name='Ariztia', index=False)
-#         else:
-#             print("No hay datos de Ariztía para guardar.")
-
-#         if carnes_apunto_data:
-#             df_carnes_apunto = pd.DataFrame(carnes_apunto_data, columns=['Producto','Precio','Precio x kg'])
-#             df_carnes_apunto.to_excel(writer, sheet_name='carnes apunto', index=False)
-#         else:
-#             print("No hay datos de carnes apunto para guardar.")
-        
-#         if carnes_bilbao_data:
-#             df_carnes_bilbao = pd.DataFrame(carnes_bilbao_data, columns=['Producto', 'Precio x kg'])
-#             df_carnes_bilbao.to_excel(writer, sheet_name='carnes bilbao', index=False)
-#         else:
-#             print("No hay datos de carnes bilbao para guardar.")
-
-#         if carnes_nubles_data:
-#             df_carnes_nubles = pd.DataFrame(carnes_nubles_data, columns=['Producto','Precio','Precio x kg'])
-#             df_carnes_nubles.to_excel(writer, sheet_name='carnes nubles', index=False)
-#         else:
-#             print("No hay datos de carnes nubles para guardar.")
-
-#         if donacarne_data:
-#             df_donacarne = pd.DataFrame(donacarne_data, columns=['Producto', 'Precio'])
-#             df_donacarne.to_excel(writer, sheet_name='doñacarne', index=False)
-#         else:
-#             print("No hay datos de doñacarne para guardar.")
-        
-#         if elcarnicero_data:
-#             df_elcarnicero = pd.DataFrame(elcarnicero_data, columns=['Producto', 'Precio'])
-#             df_elcarnicero.to_excel(writer, sheet_name='el carnicero', index=False)
-#         else:
-#             print("No hay datos de el carnicero para guardar.")
-            
-#         if frigorifico_data:
-#             df_frigorifico = pd.DataFrame(frigorifico_data, columns=['Producto', 'Precio'])
-#             df_frigorifico.to_excel(writer, sheet_name='frigorifico premium', index=False)
-#         else:
-#             print("No hay datos de el frigorifico para guardar.")
-            
-#         if procarne_data:
-#             df_procarne = pd.DataFrame(procarne_data, columns=['Producto','Precio','Precio x kg'])
-#             df_procarne.to_excel(writer, sheet_name='procarne', index=False)
-#         else:
-#             print("No hay datos de el procarne para guardar.")
-    
-#     # Obtener los bytes del archivo Excel
-#     output.seek(0)
-#     return output.getvalue()
 # # Botón para iniciar
 # if st.button("🔍 Extraer datos"):
-
-
-
-
-
-
     # # === Contar URLs totales ===
-    # urls_agro = ['vacuno/','aves/pollo/','cerdo/','cordero/','aves/pavo/','vacuno/elaborados/','detalle/']
-    # urls_ariztia = [
-    #     'pollo.html','pollo.html?p=2','pollo.html?p=3','pollo.html?p=4','pollo.html?p=5','pollo.html?p=6',
-    #     'pavo.html','pavo.html?p=2','cerdo.html','vacuno.html','vacuno.html?p=2',
-    #     'congelados/hamburguesas.html','congelados/productos-churrasco-lomito-y-bistec.html','congelados/nuggets-y-apanados.html'
-    # ]
-    # urls_carnes_apunto = [
-    #     'entrana-a-punto','tapapecho-a-punto','tartaro-a-punto','asiento-a-punto','punta-picana-a-punto','pollo-ganso-a-punto','tomahawk-a-punto','filete-bife','osobuco-a-punto','rabo-cola-de-vacuno',
-    #     'arrachera','filete-a-punto','lomo-vetado-porcionado-a-punto','panita-de-vacuno','lomo-vetado-mi-bife','mollejas-a-punto','guatitas','lomo-liso-porcionado-a-punto','rinones',
-    #     'punta-de-ganso-a-punto','entrecot-a-punto','lomo-liso-a-punto','asado-de-tira-criollo-a-punto','lomo-vetado-entero','punta-paleta-flat-iron-a-punto','posta-negra-a-punto-congelado',
-    #     'plateada-a-punto','lomo-liso-c-hueso-chuleton-a-punto','box-edition-tomahawk','asado-de-tira-criollito-a-punto-2','palanca-a-punto','chunchules','asado-de-tira-ventana',
-    #     'churrasco-a-punto-2','hamburguesa-smoked','criadillas-de-vacuno','hamburguesa-chuck-roll','estomaguillo','french-rack-de-tomahawk-2','hamburguesa-brisket','malaya-de-cerdo',
-    #     'baby-back-ribs-campo-noble','costillar-de-cerdo-campo-noble','baby-back-ribs-curacaribs','pulled-pork','trutro-largo-granja-magdalena','trutro-corto-granja-magdalena','suprema-de-pollo-familiar-in-bocca',
-    #     'pollo-ahumado','chuletas-francesas-de-cordero-simunovic','pierna-de-cordero-simunovic','chuleta-parrillera-de-cordero-simunovic-2','criadillas-de-cordero','butifarra-san-manuelina','longaniza-de-campo-san-manuelina',
-    #     'longanizas-ahumadas-secreto-de-chillan','longanicilla','longaniza-500-gr',
-    # ]
     # urls_carnes_bilbao = [
     #     'vacuno/','vacuno/page/2/','vacuno/page/3/','vacuno/page/4/','cerdo/','cerdo/page/2/','pollos/',
     #     'beefeschurrascos/','beefeschurrascos/page/2/','subproductos/','cecinas/','pavos/','hamburguesas/'
-    # ]
-    # urls_carnes_nubles = [
-    #     'vacuno','vacuno?page=2&phcursor=eyJhbGciOiJIUzI1NiJ9.eyJzayI6InBvc2l0aW9uIiwic3YiOjM2LCJkIjoiZiIsInVpZCI6NDExMTkwMTc0MDI2NjgsImwiOjM2LCJvIjowLCJyIjoiQ0RQIiwidiI6MSwicCI6Mn0.p7z1Ci39Anp8YX2p1XCHNIHoOgQACAODBlD5YATui7w',
-    #     'cerdo','aves','hamburguesas','churrascos','molidas','apanados','ofertas-flash'
     # ]
     # urls_donacarne = [
     #     'vacuno','vacuno?page=2&phcursor=eyJhbGciOiJIUzI1NiJ9.eyJzayI6InBvc2l0aW9uIiwic3YiOjI1LCJkIjoiZiIsInVpZCI6MzE1Mzk0Nzk5MzcxMDUsImwiOjI0LCJvIjowLCJyIjoiQ0RQIiwidiI6MSwicCI6Mn0.c_Hr_E7l3dLxoiEtsB5vgyRGXNsf8hbJTsx0IbeAKfo',
@@ -406,6 +206,7 @@ def extract_agrocomercial(url, categoria='sin categoria'):
     #     'todo-para-el-asado/cortes-para-parrilla.html','todo-para-el-asado/hamburguesas.html','pack.html','ofertas.html','seleccion.html'
     # ]
     # urls_frigorifico = ['vacuno-1','vacuno-1?page=2','vacuno-1?page=3','cerdo','exoticos','exoticos?page=2']
+    
     # urls_procarne = [
     #     'abastero-angus-origen','arrachera-angus-1','asado-carnicero-angus-origen','asado-de-tira-angus-laminado-congelado-copia','asado-de-tira-angus-copia','asado-de-vacio','asiento-angus-copia','caja-de-hamburguesa-cuarto-libra-114-gr-27-unidades-congelado',
     #     'choclillo-angus-origen','clavo-parrillero','costeleta-de-lomo-liso-angus-congelado-copia','entrana-angus-origen','entrana-angus','entrecot-angus','estomaguillo-seleccionado-vacio','filete-angus-copia','filete-de-punta-paleta-angus-o-flat-iron-copia','lomo-liso-angus-origen-copia',
@@ -418,54 +219,7 @@ def extract_agrocomercial(url, categoria='sin categoria'):
     #     'mollejas-de-vacuno','rinon-entero-congelado-bandeja',
     # ]
 
-    # total_urls = (
-    #     len(urls_agro) + len(urls_ariztia) + len(urls_carnes_apunto) + len(urls_carnes_bilbao) +
-    #     len(urls_carnes_nubles) + len(urls_donacarne) + len(urls_elcarnicero) +
-    #     len(urls_frigorifico) + len(urls_procarne)
-    # )
-    # # === Inicializar barra de progreso ===
-    # progress_bar = st.progress(0)
-    # status_text = st.empty()
-    # current_step = 0
-
-    # # === Agrocomercial ===
-    # base_agro = 'https://agrocomercial.cl/product-category/'
-    # all_agro_data = []
-    # for url in urls_agro:
-    #     clean_url = f"{base_agro}{url.strip()}"
-    #     try:
-    #         all_agro_data.extend(extract_agrocomercial(clean_url))
-    #     except Exception as e:
-    #         print(f"Error en Agrocomercial {clean_url}: {e}")
-    #     current_step += 1
-    #     progress_bar.progress(current_step / total_urls)
-    #     status_text.text(f"Procesando Agrocomercial... ({current_step}/{total_urls})")
-
-    # # === Ariztía ===
-    # base_ariztia = 'https://www.ariztiaatucasa.cl/'
-    # all_ariztia_data = []
-    # for url in urls_ariztia:
-    #     clean_url = f"{base_ariztia}{url.strip()}"
-    #     try:
-    #         all_ariztia_data.extend(extract_ariztia(clean_url))
-    #     except Exception as e:
-    #         print(f"Error en Ariztía {clean_url}: {e}")
-    #     current_step += 1
-    #     progress_bar.progress(current_step / total_urls)
-    #     status_text.text(f"Procesando Ariztía... ({current_step}/{total_urls})")
-
-    # # === Carnes Apunto ===
-    # base_apunto = 'https://tienda.carnesapunto.cl/products/'
-    # all_apunto_data = []
-    # for url in urls_carnes_apunto:
-    #     clean_url = f"{base_apunto}{url.strip()}"
-    #     try:
-    #         all_apunto_data.extend(extract_carnes_apunto(clean_url))
-    #     except Exception as e:
-    #         print(f"Error en Carnes Apunto {clean_url}: {e}")
-    #     current_step += 1
-    #     progress_bar.progress(current_step / total_urls)
-    #     status_text.text(f"Procesando Carnes Apunto... ({current_step}/{total_urls})")
+    
 
     # # === Carnes Bilbao ===
     # base_bilbao = 'https://www.carnesbilbao.cl/categoria-producto/'
@@ -479,19 +233,6 @@ def extract_agrocomercial(url, categoria='sin categoria'):
     #     current_step += 1
     #     progress_bar.progress(current_step / total_urls)
     #     status_text.text(f"Procesando Carnes Bilbao... ({current_step}/{total_urls})")
-
-    # # === Carnes Ñubles ===
-    # base_nubles = 'https://carnes.cl/collections/'
-    # all_nubles_data = []
-    # for url in urls_carnes_nubles:
-    #     clean_url = f"{base_nubles}{url.strip()}"
-    #     try:
-    #         all_nubles_data.extend(extract_carnes_nubles(clean_url))
-    #     except Exception as e:
-    #         print(f"Error en Carnes Ñubles {clean_url}: {e}")
-    #     current_step += 1
-    #     progress_bar.progress(current_step / total_urls)
-    #     status_text.text(f"Procesando Carnes Ñubles... ({current_step}/{total_urls})")
 
     # # === Doñacarne ===
     # base_donacarne = 'https://ventasonline.xn--doacarne-e3a.cl/collections/'
@@ -543,99 +284,3 @@ def extract_agrocomercial(url, categoria='sin categoria'):
     #     current_step += 1
     #     progress_bar.progress(current_step / total_urls)
     #     status_text.text(f"Procesando Procarne... ({current_step}/{total_urls})")
-
-    # # === Finalizar ===
-    # status_text.text("✅ Extracción completada.")
-    # progress_bar.progress(1.0)
-
-    # # === Mostrar resultados en tabs ===
-    # t1,t2,t3,t4,t5,t6,t7,t8,t9 = st.tabs([
-    #     'Agrocomercial', 'Ariztía', 'Carnes Apunto', 'Carnes Bilbao', 'Carnes Ñubles',
-    #     'Donacarne', 'El Carnicero', 'Frigorífico Premium', 'Procarne'
-    # ])
-
-    # with t1: 
-    #     if all_agro_data:
-    #         st.subheader("Agrocomercial.cl")
-    #         df = pd.DataFrame(all_agro_data, columns=['Nombre', 'Precio'])
-    #         st.dataframe(df, width='stretch')
-    #     else:
-    #         st.warning("⚠️ No se encontraron datos en Agrocomercial")
-
-    # with t2:
-    #     if all_ariztia_data:
-    #         df = pd.DataFrame(all_ariztia_data, columns=['Nombre', 'Precio', 'Unidad'])
-    #         st.subheader("Ariztíaatucasa.cl")
-    #         st.dataframe(df, width='stretch')
-    #     else:
-    #         st.warning("⚠️ No se encontraron datos en Ariztíaatucasa")
-
-    # with t3:
-    #     if all_apunto_data:
-    #         df = pd.DataFrame(all_apunto_data, columns=['Nombre','Precio','Precio x kg'])
-    #         st.subheader("Carnes Apunto")
-    #         st.dataframe(df, width='stretch')
-    #     else:
-    #         st.warning("⚠️ No se encontraron datos en Carnes Apunto")
-
-    # with t4:
-    #     if all_bilbao_data:
-    #         df = pd.DataFrame(all_bilbao_data, columns=['Nombre', 'Precio x kg'])
-    #         st.subheader("Carnes Bilbao")
-    #         st.dataframe(df, width='stretch')
-    #     else:
-    #         st.warning("⚠️ No se encontraron datos en Carnes Bilbao")
-
-    # with t5:
-    #     if all_nubles_data:
-    #         df = pd.DataFrame(all_nubles_data, columns=['Nombre','Precio','Precio x kg'])
-    #         st.subheader("Carnes Ñubles")
-    #         st.dataframe(df, width='stretch')
-    #     else:
-    #         st.warning("⚠️ No se encontraron datos en Carnes Ñubles")
-
-    # with t6:
-    #     if all_donacarne_data:
-    #         df = pd.DataFrame(all_donacarne_data, columns=['Nombre', 'Precio'])
-    #         st.subheader("Doña Carne")
-    #         st.dataframe(df, width='stretch')
-    #     else:
-    #         st.warning("⚠️ No se encontraron datos en Doña Carne")
-
-    # with t7:
-    #     if all_carnicero_data:
-    #         df = pd.DataFrame(all_carnicero_data, columns=['Nombre', 'Precio'])
-    #         st.subheader("El Carnicero")
-    #         st.dataframe(df, width='stretch')
-    #     else:
-    #         st.warning("⚠️ No se encontraron datos en El Carnicero")
-
-    # with t8:
-    #     if all_frigorifico_data:
-    #         df = pd.DataFrame(all_frigorifico_data, columns=['Nombre', 'Precio'])
-    #         st.subheader("Frigorífico Carnes Premium")
-    #         st.dataframe(df, width='stretch')
-    #     else:
-    #         st.warning("⚠️ No se encontraron datos en Frigorífico Carnes Premium")
-
-    # with t9:
-    #     if all_procarne_data:
-    #         df = pd.DataFrame(all_procarne_data, columns=['Nombre','Precio','Precio x kg'])
-    #         st.subheader("Procarne")
-    #         st.dataframe(df, width='stretch')
-    #     else:
-    #         st.warning("⚠️ No se encontraron datos en Procarne")
-
-    # # === Descarga ===
-    # # excel_bytes = save_to_excel(
-    # #     all_agro_data, all_ariztia_data, all_apunto_data, all_bilbao_data,
-    # #     all_nubles_data, all_donacarne_data, all_carnicero_data,
-    # #     all_frigorifico_data, all_procarne_data
-    # # )
-
-    # # st.download_button(
-    # #     label="📥 Descargar datos en Excel",
-    # #     data=excel_bytes,
-    # #     file_name="precios_carnes.xlsx",
-    # #     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    # # )

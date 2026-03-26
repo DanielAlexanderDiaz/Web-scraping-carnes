@@ -4,6 +4,7 @@ from datetime import datetime
 import util.agrocomercial as agrocomercial
 import util.ariztia as ariztia
 import util.carnesapunto as carnesapunto
+import util.carnesnubles as carnesnubles
 
 st.set_page_config(page_title="Carnes CL", layout="wide", page_icon="🥩")
 
@@ -34,7 +35,7 @@ with st.container(border=True):
         if categoria!=state.categoria:
             state.categoria = categoria
     with c3:
-        tienda = st.multiselect("Tiendas", ['agrocomercial','ariztia','carnes Apunto'])
+        tienda = st.multiselect("Tiendas", ['agrocomercial','ariztia','carnes Apunto','carnes nubles'])
         if tienda!=state.tienda:
             state.tienda = tienda
        
@@ -139,6 +140,7 @@ if st.button("Extraer datos"):
     
     progress_bar = st.progress(0)
     status_text = st.empty()
+    
     base_apunto = 'https://tienda.carnesapunto.cl/products/'
     all_apunto_data = []
 
@@ -159,6 +161,41 @@ if st.button("Extraer datos"):
     if all_apunto_data:
         df_apunto = pd.DataFrame(all_apunto_data, columns=['Tienda','Categoria','nombre_largo', 'nombre_corto', 'nombre_simple', 'precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total'])
         dfs_combinados.append(df_apunto)
+        
+    # ======================
+    # PROCESAR CARNES NUBLES
+    # ======================    
+    url_carnes_nubles = {
+    'vacuno':'vacuno',
+    'vacuno?page=2':'vacuno',
+    'cerdo':'cerdo',
+    'aves':'aves',
+    }
+    
+    urls_nubles= list(url_carnes_nubles.keys())
+    total_urls = len(urls_nubles)
+     
+    progress_bar = st.progress(0)
+    status_text = st.empty()
+           
+    base_nubles = 'https://carnes.cl/collections/'
+    all_nubles_data = []
+
+    for i, url in enumerate(urls_nubles):
+        clean_url = f"{base_nubles}{url.strip()}"
+        categoria = url_carnes_nubles.get(url, 'sin categoria')
+        try:
+            all_nubles_data.extend(carnesnubles.extract_carnes_nubles(clean_url, categoria))
+        except Exception as e:
+            print(f"Error en Carnes Ñubles {clean_url}: {e}")
+            
+    status_text.text(f"Operación completada en carnes nubles")
+    progress_bar.progress(1.0)     
+    
+    # Procesar DataFrame de carne nubles
+    if all_nubles_data:
+        df_nubles = pd.DataFrame(all_nubles_data, columns=['Tienda','Categoria','nombre_largo', 'nombre_corto', 'nombre_simple', 'precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total'])
+        dfs_combinados.append(df_nubles)
         
     # ========================
     # 3. COMBINAR Y LIMPIAR TODOS LOS DATOS
