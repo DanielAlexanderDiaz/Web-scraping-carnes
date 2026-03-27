@@ -166,9 +166,9 @@ if st.button("Extraer datos"):
         df_apunto = pd.DataFrame(all_apunto_data, columns=['Tienda','Categoria','nombre_largo','nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
         dfs_combinados.append(df_apunto)
         
-    # ======================
-    # PROCESAR CARNES NUBLES
-    # ======================    
+    # # ======================
+    # # PROCESAR CARNES NUBLES
+    # # ======================    
     url_carnes_nubles = {
     'vacuno':'vacuno',
     'vacuno?page=2':'vacuno',
@@ -201,9 +201,9 @@ if st.button("Extraer datos"):
         df_nubles = pd.DataFrame(all_nubles_data, columns=['Tienda','Categoria','nombre_largo','nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
         dfs_combinados.append(df_nubles)
         
-    # ======================
-    # PROCESAR DOÑA CARNE
-    # ======================  
+    # # ======================
+    # # PROCESAR DOÑA CARNE
+    # # ======================  
     url_donacarne = {
     'vacuno':'vacuno',
     'vacuno?page=2':'vacuno',
@@ -242,9 +242,9 @@ if st.button("Extraer datos"):
         df_donacarne = pd.DataFrame(all_donacarne_data, columns=['Tienda','Categoria','nombre_largo','nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
         dfs_combinados.append(df_donacarne)
     
-    # ======================
-    # PROCESAR EL CARNICERO
-    # ======================  
+    # # ======================
+    # # PROCESAR EL CARNICERO
+    # # ======================  
     url_carnicero = {
     'vacuno.html':'vacuno',
     'cerdo-nacional-o-importado.html':'cerdo',
@@ -276,9 +276,9 @@ if st.button("Extraer datos"):
         df_carnicero = pd.DataFrame(all_carnicero_data, columns=['Tienda','Categoria','nombre_largo','nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
         dfs_combinados.append(df_carnicero)
           
-    # ======================
-    # PROCESAR FRIGORIFICO PREMIUM
-    # ======================          
+    # # ======================
+    # # PROCESAR FRIGORIFICO PREMIUM
+    # # ======================          
     url_frigorifico = {
     'vacuno-1':'vacuno',
     'vacuno-1?page=2':'vacuno',
@@ -313,9 +313,9 @@ if st.button("Extraer datos"):
         df_frigorifico = pd.DataFrame(all_frigorifico_data, columns=['Tienda','Categoria','nombre_largo','nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
         dfs_combinados.append(df_frigorifico)
           
-    # ======================
-    # PROCESAR PROCARNE
-    # ====================== 
+    # # ======================
+    # # PROCESAR PROCARNE
+    # # ====================== 
     url_procarne = {
         'arrachera-angus-1':'vacuno',
         'asado-de-tira-angus-laminado-congelado-copia':'vacuno',
@@ -401,7 +401,7 @@ if st.button("Extraer datos"):
         
         # Guardar en la variable única
         state.df_filtro = df_limpio
-        st.success(f"✅ Datos combinados: {len(df_limpio)} registros extraídos de ambas tiendas")
+    
     else:
         st.warning("⚠️ No se encontraron datos en ninguna de las fuentes")
         state.df_filtro = None        
@@ -430,11 +430,17 @@ if state.df_filtro is not None:
         df_display = df_display[df_display['Tienda'].isin(filtro_tienda)]
     
     if not df_display.empty:
+        
+        total = len(df_display)
+        if total > 0:
+            st.write(total)
+            
         st.dataframe(
             df_display.sort_values('precio_neto_kg', ascending=True),
             width='stretch',
             hide_index=True
         )
+        
     else:
         st.warning("No se encontraron productos con los filtros seleccionados", icon="⚠️")
         

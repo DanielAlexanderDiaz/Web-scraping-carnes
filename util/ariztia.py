@@ -2,6 +2,16 @@ from bs4 import BeautifulSoup
 import requests
 import re
 
+def generar_nombre_producto(nombre_original, etiqueta_encontrada):
+    if not etiqueta_encontrada:
+        return re.sub(r'\s+', ' ', nombre_original).strip().title()
+    
+    principal = etiqueta_encontrada[0].title()
+    
+    nombre_final = f'{principal}'
+    
+    return nombre_final
+
 def extract_ariztia(url, categoria='sin categoria'):
     response = requests.get(url)
     data = []
@@ -10,8 +20,22 @@ def extract_ariztia(url, categoria='sin categoria'):
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
         productos = soup.find_all('strong', class_='product-item-name')
+        
+        palabras_claves = [
+            'pechuga deshuesada','posta rosada','posta negra','pollo ganso','plateada','lomo vetado',
+            'lomo liso','huachalomo','hamburguesa','ganso','carpaccio','molida','carne en tiras',
+            'desmechada','cubos','wagyu','huachalomo','abastero','tapapecho','anticuchos','flat iron',
+            'marinado','punta paleta','sobrecostilla','asiento','abastero','higado','tártaro','posta paleta',
+            'pernil pierna','ala','pernil mano','pollo entero','trutro 1/4','pechuga entera','costillar',
+            'pechuga','trutro entero','chuleta centro','chuleta vetada','pulpa ','lomito ','alitas ',
+            'longaniza','butifarra ','cerdo en tiras','agrobox','suprema','pana','patas','garras','trutro cuarto',
+            'gallina entera','trutro largo','contre ','trutro corto','corazones','nuggets','midwings','trutro',
+            'corazón','filetillo','chuleta de centro','pavo entero','apanado','midlegs','lomo centro','trutro',
+            'churrasco','asado carnicero','choclillo ','punta picana','entraña','filete','croqueta'
+            ]
 
         for producto in productos:
+            
             link_tag = producto.find('a', class_='product-item-link')
             if not link_tag:
                 continue
@@ -19,6 +43,10 @@ def extract_ariztia(url, categoria='sin categoria'):
 
             # Limpiar "aprox." y puntos innecesarios
             texto_limpio = re.sub(r'\baprox\.?|\.', '', nombre_producto, flags=re.IGNORECASE).strip()
+            
+            nombre_lower = nombre_producto.lower()
+            
+            etiquetas_encontradas = [palabra for palabra in palabras_claves if palabra in nombre_lower]
 
             # Extraer nombre, cantidad y unidad
             patron_nombre = re.compile(r'^(.*?)\s+(\d+(?:[.,]\d+)?)\s*(kg|gr)\b', re.IGNORECASE)
@@ -57,12 +85,15 @@ def extract_ariztia(url, categoria='sin categoria'):
             precio_bruto_total = 0
             
             try:      
-                if nombre_simple != 'sin data':          
+                if nombre_simple != 'sin data':       
+                    
+                    corte = generar_nombre_producto(nombre_lower, etiquetas_encontradas)
+                       
                     data.append([
                                 nombre_tienda,
                                 categoria,
-                                nombre_largo.lstrip(), 
-                                nombre_simple.lstrip(),
+                                corte,
+                                nombre_largo.lstrip(),
                                 precio_neto_kg, 
                                 precio_neto_total
                                 ])   
