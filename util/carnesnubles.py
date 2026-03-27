@@ -38,7 +38,14 @@ def extract_carnes_nubles(url, categoria='sin categoria'):
             precio_bruto_kg = 0 
             precio_bruto_total = 0
 
-            data.append((nombre_tienda,categoria,nombre_largo,nombre_corto,nombre_simple,precio_neto_kg,precio_neto_total,precio_bruto_kg,precio_bruto_total))
+            data.append([
+                nombre_tienda,
+                categoria,
+                nombre_largo,
+                nombre_simple,
+                precio_neto_kg,
+                precio_neto_total
+            ])
             
             print(f"Datos extraidos de {url}")
     else:

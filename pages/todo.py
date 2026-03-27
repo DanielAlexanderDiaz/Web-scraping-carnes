@@ -6,6 +6,9 @@ import util.ariztia as ariztia
 import util.carnesapunto as carnesapunto
 import util.carnesnubles as carnesnubles
 import util.donacarne as donacarne
+import util.elcarnicero as elcarnicero
+import util.frigorifico as frigorifico
+import util.procarne as procarne
 
 st.set_page_config(page_title="Carnes CL", layout="wide", page_icon="🥩")
 
@@ -36,7 +39,7 @@ with st.container(border=True):
         if categoria!=state.categoria:
             state.categoria = categoria
     with c3:
-        tienda = st.multiselect("Tiendas", ['agrocomercial','ariztia','carnes Apunto','carnes nubles','dona carne'])
+        tienda = st.multiselect("Tiendas", ['agrocomercial','ariztia','carnes Apunto','carnes nubles','dona carne', 'el carnicero','frigorifico premium','procarne'])
         if tienda!=state.tienda:
             state.tienda = tienda
        
@@ -79,7 +82,7 @@ if st.button("Extraer datos"):
     
     # Procesar DataFrame de agrocomercial
     if all_agro_data:
-        df_agro = pd.DataFrame(all_agro_data, columns=['Tienda','Categoria','nombre_largo', 'nombre_corto', 'nombre_simple', 'precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total'])
+        df_agro = pd.DataFrame(all_agro_data, columns=['Tienda','Categoria','nombre_largo', 'nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
         dfs_combinados.append(df_agro)
     
     # ================
@@ -114,7 +117,7 @@ if st.button("Extraer datos"):
     
     # Procesar DataFrame de ariztia
     if all_ariz_data:
-        df_ariz = pd.DataFrame(all_ariz_data, columns=['Tienda','Categoria','nombre_largo', 'nombre_corto', 'nombre_simple', 'precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total'])
+        df_ariz = pd.DataFrame(all_ariz_data, columns=['Tienda','Categoria','nombre_largo','nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
         dfs_combinados.append(df_ariz)
     
     # ======================
@@ -160,7 +163,7 @@ if st.button("Extraer datos"):
     
     # Procesar DataFrame de carne a punto
     if all_apunto_data:
-        df_apunto = pd.DataFrame(all_apunto_data, columns=['Tienda','Categoria','nombre_largo', 'nombre_corto', 'nombre_simple', 'precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total'])
+        df_apunto = pd.DataFrame(all_apunto_data, columns=['Tienda','Categoria','nombre_largo','nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
         dfs_combinados.append(df_apunto)
         
     # ======================
@@ -195,7 +198,7 @@ if st.button("Extraer datos"):
     
     # Procesar DataFrame de carne nubles
     if all_nubles_data:
-        df_nubles = pd.DataFrame(all_nubles_data, columns=['Tienda','Categoria','nombre_largo', 'nombre_corto', 'nombre_simple', 'precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total'])
+        df_nubles = pd.DataFrame(all_nubles_data, columns=['Tienda','Categoria','nombre_largo','nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
         dfs_combinados.append(df_nubles)
         
     # ======================
@@ -236,9 +239,152 @@ if st.button("Extraer datos"):
     
     # Procesar DataFrame de dona carne
     if all_donacarne_data:
-        df_donacarne = pd.DataFrame(all_donacarne_data, columns=['Tienda','Categoria','nombre_largo', 'nombre_corto', 'nombre_simple', 'precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total'])
+        df_donacarne = pd.DataFrame(all_donacarne_data, columns=['Tienda','Categoria','nombre_largo','nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
         dfs_combinados.append(df_donacarne)
     
+    # ======================
+    # PROCESAR EL CARNICERO
+    # ======================  
+    url_carnicero = {
+    'vacuno.html':'vacuno',
+    'cerdo-nacional-o-importado.html':'cerdo',
+    'pollo-nacional-o-importado.html':'pollo',
+    }
+    
+    progress_bar = st.progress(0)
+    status_text = st.empty()
+
+    urls_carnicero = list(url_carnicero.keys())
+    total_urls = len(url_carnicero)
+        
+    base_carnicero = 'https://elcarnicero.cl/'
+    all_carnicero_data = []
+
+    for i, url in enumerate(urls_carnicero):
+        clean_url = f"{base_carnicero}{url.strip()}"
+        categoria = url_carnicero.get(url, 'sin categoria')
+        try:
+            all_carnicero_data.extend(elcarnicero.extract_elcarnicero(clean_url, categoria))
+        except Exception as e:
+            print(f"Error en El Carnicero {clean_url}: {e}")
+        
+    status_text.text(f"Operación completada en el carnicero")
+    progress_bar.progress(1.0)       
+        
+    # Procesar DataFrame de el carnicero
+    if all_carnicero_data:
+        df_carnicero = pd.DataFrame(all_carnicero_data, columns=['Tienda','Categoria','nombre_largo','nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
+        dfs_combinados.append(df_carnicero)
+          
+    # ======================
+    # PROCESAR FRIGORIFICO PREMIUM
+    # ======================          
+    url_frigorifico = {
+    'vacuno-1':'vacuno',
+    'vacuno-1?page=2':'vacuno',
+    'vacuno-1?page=3':'vacuno',
+    'cerdo':'cerdo',
+    'exoticos':'cordero',
+    'exoticos?page=2':'cordero'
+    }
+
+    progress_bar = st.progress(0)
+    status_text = st.empty()
+
+    urls_frigorifico = list(url_frigorifico.keys())
+    total_urls = len(urls_frigorifico)
+
+    base_frigorifico = 'https://www.frigorificocarnespremium.com/collections/'
+    all_frigorifico_data = []
+    
+    for i, url in enumerate(urls_frigorifico):
+        clean_url = f"{base_frigorifico}{url.strip()}"
+        categoria = url_frigorifico.get(url, 'sin categoria')
+        try:
+            all_frigorifico_data.extend(frigorifico.extract_frigorificocarnespremium(clean_url, categoria))
+        except Exception as e:
+            print(f"Error en Frigorífico {clean_url}: {e}")
+      
+    status_text.text(f"Operación completada en frigorifico")
+    progress_bar.progress(1.0)             
+    
+    # Procesar DataFrame de frigorifico
+    if all_frigorifico_data:
+        df_frigorifico = pd.DataFrame(all_frigorifico_data, columns=['Tienda','Categoria','nombre_largo','nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
+        dfs_combinados.append(df_frigorifico)
+          
+    # ======================
+    # PROCESAR PROCARNE
+    # ====================== 
+    url_procarne = {
+        'arrachera-angus-1':'vacuno',
+        'asado-de-tira-angus-laminado-congelado-copia':'vacuno',
+        'asado-de-vacio':'vacuno',
+        'asiento-angus-copia':'vacuno',
+        'choclillo-angus-origen':'vacuno',
+        'costeleta-de-lomo-liso-angus-congelado-copia':'vacuno',
+        'costeleta-de-lomo-liso-angus-congelado-copia':'vacuno',
+        'entrana-cat-u':'vacuno',
+        'entrecot-angus':'vacuno',
+        'estomaguillo-seleccionado-vacio':'vacuno',
+        'filete-angus-con-cordon':'vacuno',
+        'filete-de-punta-paleta-angus-o-flat-iron-copia':'vacuno',
+        'filete-u-nacional':'vacuno',
+        'huachalomo-angus-copia':'vacuno',
+        'lomo-liso-angus-origen-copia':'vacuno',
+        'lomo-vetado-angus-origen-copia':'vacuno',
+        'osobuco-pierna-trozado-congelado':'vacuno',
+        'palanca-angus-copia':'vacuno',
+        'plateada-angus-copia':'vacuno',
+        'pollo-barriga-angus':'vacuno',
+        'pollo-ganso-angus':'vacuno',
+        'poncho-parrillero-aranita-angus':'vacuno',
+        'posta-negra-angus-origen-copia':'vacuno',
+        'posta-rosada':'vacuno',
+        'punta-de-ganso-angus':'vacuno',
+        'punta-picana-angus-origen-copia':'vacuno',
+        'sobrecostilla-seleccionado-pieza':'vacuno',
+        'tapabarriga-pieza-seleccionado':'vacuno',
+        'tomahawk-angus-origencongelado':'vacuno',
+        'bistecpechuga':'pollo',
+        'filetillo-crocante-de-pollo':'pollo',
+        'pechuga-entera-de-pollo-deshuesado':'pollo',
+        'truto-parrillero':'pollo',
+        'bocaditos':'pollo',
+        'filetillo-de-pollo':'pollo',
+        'trutro-corto-de-pollo':'pollo',
+        'trutro-largo-de-pollo':'pollo',
+        'trutro-entero':'pollo',
+        'trutrito-de-ala':'pollo',
+        'pechuga-crocante':'pollo',
+        'pollo-entero':'pollo',
+    }
+    
+    progress_bar = st.progress(0)
+    status_text = st.empty()
+        
+    urls_procarne = list(url_procarne.keys())
+    total_urls = len(urls_procarne)    
+    
+    base_procarne = 'https://www.procarne.cl/products/'
+    all_procarne_data = []
+        
+    for i, url in enumerate(urls_procarne):
+        clean_url = f"{base_procarne}{url.strip()}"
+        categoria = url_procarne.get(url, 'sin categoria')
+        try:
+            all_procarne_data.extend(procarne.extract_procarne(clean_url, categoria))
+        except Exception as e:
+            print(f"Error en Procarne {clean_url}: {e}")
+            
+    status_text.text(f"Operación completada en procarne")
+    progress_bar.progress(1.0)             
+     
+    # Procesar DataFrame de procarne
+    if all_procarne_data:
+        df_procarne = pd.DataFrame(all_procarne_data, columns=['Tienda','Categoria','nombre_largo','nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
+        dfs_combinados.append(df_procarne)    
+          
     # ========================
     # 3. COMBINAR Y LIMPIAR TODOS LOS DATOS
     # ========================
@@ -250,7 +396,7 @@ if st.button("Extraer datos"):
         df_limpio = df_macro.drop_duplicates(keep='first')
         
         # Convertir columnas numéricas
-        columnas_numericas = ['precio_neto_kg', 'precio_neto_total', 'precio_bruto_kg', 'precio_bruto_total']
+        columnas_numericas = ['precio_neto_kg', 'precio_neto_total']
         df_limpio[columnas_numericas] = df_limpio[columnas_numericas].apply(pd.to_numeric, errors='coerce')
         
         # Guardar en la variable única

@@ -34,8 +34,15 @@ def extract_donacarne(url, categoria='sin categoria'):
             precio_bruto_kg = precio
             precio_bruto_total = precio
                         
-            data.append([nombre_tienda, categoria, nombre_largo, nombre_corto, nombre_simple, precio_neto_kg, precio_neto_total, precio_bruto_kg, precio_bruto_total])
-            print(data)
+            data.append([
+                nombre_tienda, 
+                categoria, 
+                nombre_largo,  
+                nombre_simple, 
+                precio_neto_kg, 
+                precio_neto_total
+            ])
+
             print(f"Datos extraidos de {url}")
     else:
         print(f"Error al acceder a la página {url}. Código de estado: {response.status_code}")

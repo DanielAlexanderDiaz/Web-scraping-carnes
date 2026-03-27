@@ -62,12 +62,9 @@ def extract_ariztia(url, categoria='sin categoria'):
                                 nombre_tienda,
                                 categoria,
                                 nombre_largo.lstrip(), 
-                                nombre_corto.lstrip(), 
                                 nombre_simple.lstrip(),
                                 precio_neto_kg, 
-                                precio_neto_total, 
-                                precio_bruto_kg, 
-                                precio_bruto_total
+                                precio_neto_total
                                 ])   
                         
             except (ValueError, ZeroDivisionError) as e:
