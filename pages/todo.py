@@ -31,7 +31,7 @@ if 'df_filtro' not in state:
     
 #filtro
 with st.container(border=True):
-    c1, c2, c3, c4 = st.columns(4)
+    c1,c2,c3,c4,c5 = st.columns(5)
     with c1:
         nombre = st.text_input("Nombre del producto", value=state.nombre)
         if nombre!=state.nombre:
@@ -47,14 +47,22 @@ with st.container(border=True):
     with c4:
         tienda = st.multiselect("Tiendas", ['agrocomercial','ariztia','carnes Apunto','carnes nubles','dona carne', 'el carnicero','frigorifico premium','procarne'])
         if tienda!=state.tienda:
-            state.tienda = tienda        
+            state.tienda = tienda       
+    with c5:
+        if st.button("Limpiar filtros"):
+            state.categoria = []
+            state.nombre = ''
+            state.tienda = []
+            state.corte = ''
+            state.df_filtro = None 
     
 
 with st.container():
-    
+
     col1, col2 = st.columns(2)
+    
     with col1:  
-        if st.button("Iniciar", icon='▶'):
+        if st.button("▶"):
         
             # Lista para acumular todos los DataFrames limpios
             dfs_combinados = []
@@ -427,13 +435,14 @@ with st.container():
                 state.df_filtro = None        
     
     with col2:
-        if st.button("Limpiar filtros"):
+        if st.button("⏹"):
             state.categoria = []
             state.nombre = ''
             state.tienda = []
             state.corte = ''
             state.df_filtro = None
-
+            state.detener = True
+           
 # Estados de los filtros    
 if state.df_filtro is not None:
     df = state.df_filtro.copy()
@@ -476,7 +485,7 @@ if state.df_filtro is not None:
         
         total = len(df_display)
         if total > 0:
-            st.write(f'productos encontrados: {total} ')
+            st.write(f'Datos encontrados: {total} ')
         
     else:
         st.warning("No se encontraron productos con los filtros seleccionados", icon="⚠️")
