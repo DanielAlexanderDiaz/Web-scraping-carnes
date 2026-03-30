@@ -67,12 +67,8 @@ def extract_carnes_apunto(url, categoria='sin categoria'):
                         precio_kg = int(precio_kg)
                     
         nombre_largo = nombre 
-        nombre_corto = nombre
-        nombre_simple = nombre
         precio_neto_kg = precio_kg
         precio_neto_total = precio
-        precio_bruto_kg = precio
-        precio_bruto_total = precio
 
         corte = generar_nombre_producto(nombre_lower, etiquetas_encontradas)
         

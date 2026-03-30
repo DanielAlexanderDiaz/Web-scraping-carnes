@@ -69,29 +69,20 @@ def extract_agrocomercial(url, categoria='sin categoria'):
                     precio_final = span_precio.get_text(strip=True).replace('$', '').replace('.', '')
                 else:
                     continue  # Saltar si no hay precio
-                
-            p = r'(?i)\b(CAT-V|Caja|CONGELADO|Vacio|Porc.|Vacuno|de Vacuno|de Cerdo|Porc|Cat V|de Pollo|Cajas de|Porcionada|Porcionado|2.0 aprox|Congelada|Fresca|.)\b\.?\s*'
-                
+                    
             kg_int = int(kg)
             precio_bruto_total = int((precio_final))
             precio_bruto_kg = ceil(precio_bruto_total/kg_int)
             precio_neto_total = ceil(precio_bruto_total/1.19)
             precio_neto_kg = ceil(precio_bruto_kg/1.19)
-            nombre_largo = f"{solo_nombre}, {kg} kg"
+            nombre_largo = solo_nombre
             
             try:    
                 if solo_nombre != 'sin data':
                         
                     corte = generar_nombre_producto(nombre_lower, etiquetas_encontradas)
                         
-                    data.append([
-                        nombre_tienda,
-                        categoria,
-                        corte,
-                        nombre_largo,  
-                        precio_neto_kg, 
-                        precio_neto_total
-                        ])  
+                    data.append([nombre_tienda,categoria,corte,nombre_largo,precio_neto_kg,precio_neto_total])  
                         
                     # print(nombre_tienda,categoria,nombre_largo) 
                     # print(nombre_lower)

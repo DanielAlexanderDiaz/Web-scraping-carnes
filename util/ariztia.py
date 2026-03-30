@@ -73,19 +73,12 @@ def extract_ariztia(url, categoria='sin categoria'):
             valor_limpio = numero_str.replace('.', '')
             valor_numerico = int(valor_limpio)
 
-            precio_neto_kg = int(valor_numerico / 1.19)
-            
-            p = r'(?i)\b(de Pollo|de Vacuno|IQF|Fresco|Congelada|Congelado|2 Un|al vacío|envasado|envasada|Caja de|Granel|granel|Ariztia|Caja|Congeladas|Fresca|de Pavo|porcionada|de Cerdo|al Vacio|envase|Light|.)\b\.?\s*'
-            
-            nombre_largo = nombre_producto
-            nombre_corto = nombre
-            nombre_simple = re.sub(p,' ', nombre_corto)
+            precio_neto_kg = int(valor_numerico / 1.19)    
+            nombre_largo = nombre_producto.lstrip()
             precio_neto_total = 0 
-            precio_bruto_kg = valor_numerico
-            precio_bruto_total = 0
             
             try:      
-                if nombre_simple != 'sin data':       
+                if nombre_largo != 'sin data':       
                     
                     corte = generar_nombre_producto(nombre_lower, etiquetas_encontradas)
                        
@@ -93,7 +86,7 @@ def extract_ariztia(url, categoria='sin categoria'):
                                 nombre_tienda,
                                 categoria,
                                 corte,
-                                nombre_largo.lstrip(),
+                                nombre_largo,
                                 precio_neto_kg, 
                                 precio_neto_total
                                 ])   
