@@ -4,6 +4,16 @@ import requests
 import re
 from math import ceil
 
+def generar_nombre_producto(nombre_original, etiqueta_encontrada):
+    if not etiqueta_encontrada:
+        return re.sub(r'\s+', ' ', nombre_original).strip().title()
+    
+    principal = etiqueta_encontrada[0].title()
+    
+    nombre_final = f'{principal}'
+    
+    return nombre_final
+
 def extract_elcarnicero(url, categoria='sin categoria'):
     response = requests.get(url)
     data = []
@@ -14,22 +24,35 @@ def extract_elcarnicero(url, categoria='sin categoria'):
         
         productos = soup.find_all('li', class_='item')
         
+        palabras_claves = [
+            'filete','lomo liso','posta negra','posta rosada','pollo ganso','ganso','asiento','punta picana','abastero','palanca','huachalomo',
+            'sobrecostilla','lomo vetado','tapapecho','posta paleta','punta paleta','choclillo','plateada','asado carnicero','osobuco','aletilla',
+            'asado de tira','coluda','hueso','molida','guatacallo','pata','hígado','chunchul','lengua','malaya','tomahawk','mollejas','flat iron',
+            'entraña','pulpa pierna','costillar','chuleta centro','chuleta vetada','lomo centro','lomito','pernil mano','cazuela','pulpa','bistec',
+            'pechuga deshuesada','pechuga entera','trutro cuarto','trutro ala','trutro largo','trutro entero','pollo entero','filetillo'
+            ]
+        
         for producto in productos:
             nombre = producto.find('h2', class_='product-name').text
             precio = producto.find('span', class_='price').text
             
             nombre_largo = nombre
-            nombre_simple = nombre
             precio_neto_kg = precio
             precio_neto_total = precio
+            
+            nombre_lower = nombre.lower()
+        
+            etiquetas_encontradas = [palabra for palabra in palabras_claves if palabra in nombre_lower]
+            
+            corte = generar_nombre_producto(nombre_lower, etiquetas_encontradas)
             
             try:
                 if nombre != 'sin data':
                     data.append([
                         nombre_tienda, 
                         categoria,
-                        nombre_largo,
-                        nombre_simple, 
+                        corte,
+                        nombre_largo, 
                         precio_neto_kg,
                         precio_neto_total
                     ])

@@ -3,6 +3,16 @@ import requests
 import re
 from math import ceil
 
+def generar_nombre_producto(nombre_original, etiqueta_encontrada):
+    if not etiqueta_encontrada:
+        return re.sub(r'\s+', ' ', nombre_original).strip().title()
+    
+    principal = etiqueta_encontrada[0].title()
+    
+    nombre_final = f'{principal}'
+    
+    return nombre_final
+
 def extract_carnes_nubles(url, categoria='sin categoria'):
     response = requests.get(url)
     data = []
@@ -10,6 +20,16 @@ def extract_carnes_nubles(url, categoria='sin categoria'):
         soup = BeautifulSoup(response.text, 'html.parser')
 
         produtos = soup.find_all('div', class_='yv-product-information')
+        
+        palabras_claves = [
+            'chuleta de centro','chuleta vetada','panceta','chinchulin','lomito','truto corto','hueso',
+            'malaya','tuto alita','pastrami','truto largo','pechuga','teclas de lomo','pollo entero',
+            'choclillo','abastero','posta paleta','palanca','lomo vetado','flat iron','entraña','sobrecostilla',
+            'tapapecho','entrecot','arrachera','pollo ganso','costeleta','abastero','lengua','costillar','huachalomo',
+            'punta picana','posta negra','punta paleta','posta rosada','palanca','poncho','petit tender','clavo','asiento',
+            'asado carnicero','pollo barriga','lomo liso','croqueta','tapabarriga','hamburguesa','punta de ganso','tomahawk',
+            'lomo liso','filete','plateada','asado de tira'
+            ]
 
         for producto in produtos:
             nombre = producto.find('a', class_='yv-product-title').text
@@ -28,21 +48,23 @@ def extract_carnes_nubles(url, categoria='sin categoria'):
             if match:
                 precio_kg = match.group(1).replace('.','')
                 precio_new_kg = int(precio_kg)            
+                
+            nombre_lower = nombre.lower()
+        
+            etiquetas_encontradas = [palabra for palabra in palabras_claves if palabra in nombre_lower]
+            
+            corte = generar_nombre_producto(nombre_lower, etiquetas_encontradas)
             
             nombre_tienda = 'carnes nubles'
             nombre_largo = nombre 
-            nombre_corto = nombre_new 
-            nombre_simple = nombre_new
             precio_neto_kg = precio_final 
             precio_neto_total = precio_new_kg 
-            precio_bruto_kg = 0 
-            precio_bruto_total = 0
 
             data.append([
                 nombre_tienda,
                 categoria,
+                corte,
                 nombre_largo,
-                nombre_simple,
                 precio_neto_kg,
                 precio_neto_total
             ])

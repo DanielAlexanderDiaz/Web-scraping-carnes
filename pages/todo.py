@@ -52,195 +52,195 @@ if st.button("Extraer datos"):
     # ======================
     # PROCESAR AGROCOMERCIAL
     # ======================
-    url_agro = {
-        'vacuno/':'vacuno', 
-        'aves/pollo/':'pollo', 
-        'cerdo/':'cerdo',
-        'cordero/':'cordero', 
-        'aves/pavo/':'pavo'
-    }
-    urls_agro = list(url_agro.keys())
-    total_urls = len(urls_agro)
+    # url_agro = {
+    #     'vacuno/':'vacuno', 
+    #     'aves/pollo/':'pollo', 
+    #     'cerdo/':'cerdo',
+    #     'cordero/':'cordero', 
+    #     'aves/pavo/':'pavo'
+    # }
+    # urls_agro = list(url_agro.keys())
+    # total_urls = len(urls_agro)
     
-    progress_bar = st.progress(0)
-    status_text = st.empty()
-    base_agro = 'https://agrocomercial.cl/product-category/'
-    all_agro_data = []
+    # progress_bar = st.progress(0)
+    # status_text = st.empty()
+    # base_agro = 'https://agrocomercial.cl/product-category/'
+    # all_agro_data = []
     
-    for i, url in enumerate(urls_agro):
-        clean_url = f"{base_agro}{url.strip()}"
-        categoria = url_agro.get(url, 'sin categoria')
-        try:
-            all_agro_data.extend(agrocomercial.extract_agrocomercial(clean_url, categoria))
-        except Exception as e:
-            print(f"Error en agrocomercial {clean_url}: {e}")
-        progress_bar.progress((i + 1) / total_urls)
-        status_text.text(f"agrocomercial en proceso... ({i + 1}/{total_urls})")
+    # for i, url in enumerate(urls_agro):
+    #     clean_url = f"{base_agro}{url.strip()}"
+    #     categoria = url_agro.get(url, 'sin categoria')
+    #     try:
+    #         all_agro_data.extend(agrocomercial.extract_agrocomercial(clean_url, categoria))
+    #     except Exception as e:
+    #         print(f"Error en agrocomercial {clean_url}: {e}")
+    #     progress_bar.progress((i + 1) / total_urls)
+    #     status_text.text(f"agrocomercial en proceso... ({i + 1}/{total_urls})")
     
-    status_text.text(f"Operación completada en agrocomercial")
-    progress_bar.progress(1.0)
+    # status_text.text(f"Operación completada en agrocomercial")
+    # progress_bar.progress(1.0)
     
-    # Procesar DataFrame de agrocomercial
-    if all_agro_data:
-        df_agro = pd.DataFrame(all_agro_data, columns=['Tienda','Categoria','nombre_largo', 'nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
-        dfs_combinados.append(df_agro)
+    # # Procesar DataFrame de agrocomercial
+    # if all_agro_data:
+    #     df_agro = pd.DataFrame(all_agro_data, columns=['Tienda','Categoria','nombre_largo', 'nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
+    #     dfs_combinados.append(df_agro)
     
     # ================
     # PROCESAR ARIZTIA
     # ================
-    url_ariz = {
-        'pollo.html':'pollo', 'pollo.html?p=2':'pollo', 'pollo.html?p=3':'pollo','pollo.html?p=4':'pollo', 'pollo.html?p=5':'pollo', 'pollo.html?p=6':'pollo',
-        'pavo.html':'pavo', 'pavo.html?p=2':'pavo', 'cerdo.html':'cerdo','vacuno.html':'vacuno', 'vacuno.html?p=2':'vacuno','congelados/hamburguesas.html':'otros',
-        'congelados/productos-churrasco-lomito-y-bistec.html':'otros','congelados/nuggets-y-apanados.html':'otros',
-    }
+    # url_ariz = {
+    #     'pollo.html':'pollo', 'pollo.html?p=2':'pollo', 'pollo.html?p=3':'pollo','pollo.html?p=4':'pollo', 'pollo.html?p=5':'pollo', 'pollo.html?p=6':'pollo',
+    #     'pavo.html':'pavo', 'pavo.html?p=2':'pavo', 'cerdo.html':'cerdo','vacuno.html':'vacuno', 'vacuno.html?p=2':'vacuno','congelados/hamburguesas.html':'otros',
+    #     'congelados/productos-churrasco-lomito-y-bistec.html':'otros','congelados/nuggets-y-apanados.html':'otros',
+    # }
     
-    urls_ariz = list(url_ariz.keys())
-    total_urls = len(urls_ariz)
+    # urls_ariz = list(url_ariz.keys())
+    # total_urls = len(urls_ariz)
     
-    progress_bar = st.progress(0)
-    status_text = st.empty()
-    base_ariz = 'https://www.ariztiaatucasa.cl/'
-    all_ariz_data = []
+    # progress_bar = st.progress(0)
+    # status_text = st.empty()
+    # base_ariz = 'https://www.ariztiaatucasa.cl/'
+    # all_ariz_data = []
     
-    for i, url in enumerate(urls_ariz):
-        clean_url = f"{base_ariz}{url.strip()}"
-        categoria = url_ariz.get(url, 'sin categoria')
-        try:
-            all_ariz_data.extend(ariztia.extract_ariztia(clean_url, categoria))
-        except Exception as e:
-            print(f"Error en ariztia {clean_url}: {e}")
-        progress_bar.progress((i + 1) / total_urls)
-        status_text.text(f"ariztia en proceso... ({i + 1}/{total_urls})")
+    # for i, url in enumerate(urls_ariz):
+    #     clean_url = f"{base_ariz}{url.strip()}"
+    #     categoria = url_ariz.get(url, 'sin categoria')
+    #     try:
+    #         all_ariz_data.extend(ariztia.extract_ariztia(clean_url, categoria))
+    #     except Exception as e:
+    #         print(f"Error en ariztia {clean_url}: {e}")
+    #     progress_bar.progress((i + 1) / total_urls)
+    #     status_text.text(f"ariztia en proceso... ({i + 1}/{total_urls})")
     
-    status_text.text(f"Operación completada en ariztia")
-    progress_bar.progress(1.0)
+    # status_text.text(f"Operación completada en ariztia")
+    # progress_bar.progress(1.0)
     
-    # Procesar DataFrame de ariztia
-    if all_ariz_data:
-        df_ariz = pd.DataFrame(all_ariz_data, columns=['Tienda','Categoria','nombre_largo','nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
-        dfs_combinados.append(df_ariz)
+    # # Procesar DataFrame de ariztia
+    # if all_ariz_data:
+    #     df_ariz = pd.DataFrame(all_ariz_data, columns=['Tienda','Categoria','nombre_largo','nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
+    #     dfs_combinados.append(df_ariz)
     
     # ======================
     # PROCESAR CARNES APUNTO
     # ======================
-    url_carnes_apunto = {
-        'filete-bife':'vacuno','lomo-liso-c-hueso-chuleton-a-punto':'vacuno','entrecot-a-punto':'vacuno','box-edition-lomo-liso-bife':'vacuno','box-edition-medallon-de-filete':'vacuno',
-        'box-edition-tomahawk':'vacuno','box-edition-lomo-vetado-bife':'vacuno','hamburguesa-chuck-roll':'vacuno','hamburguesa-brisket':'vacuno','mollejas-a-punto':'vacuno',
-        'chunchules':'vacuno','lengua-a-punto':'vacuno','criadillas-de-vacuno':'vacuno','panita-de-vacuno':'vacuno','ubres-de-vacuno-a-punto':'vacuno','rinones':'vacuno',
-        'churrasco-a-punto-2':'vacuno','hueso-tuetano-a-punto':'vacuno','rabo-cola-de-vacuno':'vacuno','asado-de-tira-criollito-a-punto-2':'vacuno','posta-negra-a-punto-congelado':'vacuno',
-        'corazon-de-vacuno-a-punto':'vacuno','pata-de-vacuno-a-punto':'vacuno','estomaguillo':'vacuno','asado-de-tira-criollo-a-punto':'vacuno','tartaro-a-punto':'vacuno',
-        'french-rack-de-tomahawk-2':'vacuno','garron-de-osobuco-prime-1-5-kg':'vacuno','punta-de-ganso-a-punto':'vacuno','lomo-vetado-entero':'vacuno','lomo-vetado-porcionado-a-punto':'vacuno',
-        'lomo-liso-porcionado-a-punto':'vacuno','lomo-vetado-mi-bife':'vacuno','filete-a-punto':'vacuno','punta-picana-a-punto':'vacuno','punta-paleta-flat-iron-a-punto':'vacuno',
-        'plateada-a-punto':'vacuno','asiento-a-punto':'vacuno','liso-bife-350-grs-a-punto':'vacuno','filete-importado-ft':'vacuno','arrachera-1-kg-aprox':'vacuno',
-        'pollo-ganso-a-punto':'vacuno','lomo-liso-a-punto':'vacuno','churrasco-fundo-sur-120-grs':'vacuno',
-        'baby-back-ribs-curacaribs':'cerdo','pulled-pork':'cerdo','baby-back-ribs-campo-noble':'cerdo','costillar-de-cerdo-campo-noble':'cerdo','malaya-de-cerdo':'cerdo',
-        'trutro-corto-granja-magdalena':'pollo','trutro-largo-granja-magdalena':'pollo','pechuga-deshuesada-800grs-granja-magdalena':'pollo','milanesa-de-pollo-familiar-1-kg':'pollo',
-        'pollo-ahumado':'pollo','filetito-de-pollo-800grs-granja-magdalena':'pollo','panita-de-pollo-500-grs-aprox':'pollo','uprema-de-pollo-familiar-in-bocca':'pollo','pollo-entero-1-8-kg-aprox':'pollo',
-        'chuletas-francesas-de-cordero-simunovic':'cordero','pierna-de-cordero-simunovic':'cordero','chuleta-parrillera-de-cordero-simunovic-2':'cordero','criadillas-de-cordero':'cordero',
-    }
+    # url_carnes_apunto = {
+    #     'filete-bife':'vacuno','lomo-liso-c-hueso-chuleton-a-punto':'vacuno','entrecot-a-punto':'vacuno','box-edition-lomo-liso-bife':'vacuno','box-edition-medallon-de-filete':'vacuno',
+    #     'box-edition-tomahawk':'vacuno','box-edition-lomo-vetado-bife':'vacuno','hamburguesa-chuck-roll':'vacuno','hamburguesa-brisket':'vacuno','mollejas-a-punto':'vacuno',
+    #     'chunchules':'vacuno','lengua-a-punto':'vacuno','criadillas-de-vacuno':'vacuno','panita-de-vacuno':'vacuno','ubres-de-vacuno-a-punto':'vacuno','rinones':'vacuno',
+    #     'churrasco-a-punto-2':'vacuno','hueso-tuetano-a-punto':'vacuno','rabo-cola-de-vacuno':'vacuno','asado-de-tira-criollito-a-punto-2':'vacuno','posta-negra-a-punto-congelado':'vacuno',
+    #     'corazon-de-vacuno-a-punto':'vacuno','pata-de-vacuno-a-punto':'vacuno','estomaguillo':'vacuno','asado-de-tira-criollo-a-punto':'vacuno','tartaro-a-punto':'vacuno',
+    #     'french-rack-de-tomahawk-2':'vacuno','garron-de-osobuco-prime-1-5-kg':'vacuno','punta-de-ganso-a-punto':'vacuno','lomo-vetado-entero':'vacuno','lomo-vetado-porcionado-a-punto':'vacuno',
+    #     'lomo-liso-porcionado-a-punto':'vacuno','lomo-vetado-mi-bife':'vacuno','filete-a-punto':'vacuno','punta-picana-a-punto':'vacuno','punta-paleta-flat-iron-a-punto':'vacuno',
+    #     'plateada-a-punto':'vacuno','asiento-a-punto':'vacuno','liso-bife-350-grs-a-punto':'vacuno','filete-importado-ft':'vacuno','arrachera-1-kg-aprox':'vacuno',
+    #     'pollo-ganso-a-punto':'vacuno','lomo-liso-a-punto':'vacuno','churrasco-fundo-sur-120-grs':'vacuno',
+    #     'baby-back-ribs-curacaribs':'cerdo','pulled-pork':'cerdo','baby-back-ribs-campo-noble':'cerdo','costillar-de-cerdo-campo-noble':'cerdo','malaya-de-cerdo':'cerdo',
+    #     'trutro-corto-granja-magdalena':'pollo','trutro-largo-granja-magdalena':'pollo','pechuga-deshuesada-800grs-granja-magdalena':'pollo','milanesa-de-pollo-familiar-1-kg':'pollo',
+    #     'pollo-ahumado':'pollo','filetito-de-pollo-800grs-granja-magdalena':'pollo','panita-de-pollo-500-grs-aprox':'pollo','uprema-de-pollo-familiar-in-bocca':'pollo','pollo-entero-1-8-kg-aprox':'pollo',
+    #     'chuletas-francesas-de-cordero-simunovic':'cordero','pierna-de-cordero-simunovic':'cordero','chuleta-parrillera-de-cordero-simunovic-2':'cordero','criadillas-de-cordero':'cordero',
+    # }
     
-    urls_apunto = list(url_carnes_apunto.keys())
-    total_urls = len(urls_apunto)
+    # urls_apunto = list(url_carnes_apunto.keys())
+    # total_urls = len(urls_apunto)
     
-    progress_bar = st.progress(0)
-    status_text = st.empty()
+    # progress_bar = st.progress(0)
+    # status_text = st.empty()
     
-    base_apunto = 'https://tienda.carnesapunto.cl/products/'
-    all_apunto_data = []
+    # base_apunto = 'https://tienda.carnesapunto.cl/products/'
+    # all_apunto_data = []
 
-    for i, url in enumerate(urls_apunto):
-        clean_url = f"{base_apunto}{url.strip()}"
-        categoria = url_carnes_apunto.get(url, 'sin categoria')
-        try:
-            all_apunto_data.extend(carnesapunto.extract_carnes_apunto(clean_url, categoria))
-        except Exception as e:
-            print(f"Error en agrocomercial {clean_url}: {e}")
-        progress_bar.progress((i + 1) / total_urls)
-        status_text.text(f"carnes apunto en proceso... ({i + 1}/{total_urls})")
+    # for i, url in enumerate(urls_apunto):
+    #     clean_url = f"{base_apunto}{url.strip()}"
+    #     categoria = url_carnes_apunto.get(url, 'sin categoria')
+    #     try:
+    #         all_apunto_data.extend(carnesapunto.extract_carnes_apunto(clean_url, categoria))
+    #     except Exception as e:
+    #         print(f"Error en agrocomercial {clean_url}: {e}")
+    #     progress_bar.progress((i + 1) / total_urls)
+    #     status_text.text(f"carnes apunto en proceso... ({i + 1}/{total_urls})")
     
-    status_text.text(f"Operación completada en carnes apunto")
-    progress_bar.progress(1.0)
+    # status_text.text(f"Operación completada en carnes apunto")
+    # progress_bar.progress(1.0)
     
-    # Procesar DataFrame de carne a punto
-    if all_apunto_data:
-        df_apunto = pd.DataFrame(all_apunto_data, columns=['Tienda','Categoria','nombre_largo','nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
-        dfs_combinados.append(df_apunto)
+    # # Procesar DataFrame de carne a punto
+    # if all_apunto_data:
+    #     df_apunto = pd.DataFrame(all_apunto_data, columns=['Tienda','Categoria','nombre_largo','nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
+    #     dfs_combinados.append(df_apunto)
         
     # # ======================
     # # PROCESAR CARNES NUBLES
     # # ======================    
-    url_carnes_nubles = {
-    'vacuno':'vacuno',
-    'vacuno?page=2':'vacuno',
-    'cerdo':'cerdo',
-    'aves':'aves',
-    }
+    # url_carnes_nubles = {
+    # 'vacuno':'vacuno',
+    # 'vacuno?page=2':'vacuno',
+    # 'cerdo':'cerdo',
+    # 'aves':'pollo',
+    # }
     
-    urls_nubles= list(url_carnes_nubles.keys())
-    total_urls = len(urls_nubles)
+    # urls_nubles= list(url_carnes_nubles.keys())
+    # total_urls = len(urls_nubles)
      
-    progress_bar = st.progress(0)
-    status_text = st.empty()
+    # progress_bar = st.progress(0)
+    # status_text = st.empty()
            
-    base_nubles = 'https://carnes.cl/collections/'
-    all_nubles_data = []
+    # base_nubles = 'https://carnes.cl/collections/'
+    # all_nubles_data = []
 
-    for i, url in enumerate(urls_nubles):
-        clean_url = f"{base_nubles}{url.strip()}"
-        categoria = url_carnes_nubles.get(url, 'sin categoria')
-        try:
-            all_nubles_data.extend(carnesnubles.extract_carnes_nubles(clean_url, categoria))
-        except Exception as e:
-            print(f"Error en Carnes Ñubles {clean_url}: {e}")
+    # for i, url in enumerate(urls_nubles):
+    #     clean_url = f"{base_nubles}{url.strip()}"
+    #     categoria = url_carnes_nubles.get(url, 'sin categoria')
+    #     try:
+    #         all_nubles_data.extend(carnesnubles.extract_carnes_nubles(clean_url, categoria))
+    #     except Exception as e:
+    #         print(f"Error en Carnes Ñubles {clean_url}: {e}")
             
-    status_text.text(f"Operación completada en carnes nubles")
-    progress_bar.progress(1.0)     
+    # status_text.text(f"Operación completada en carnes nubles")
+    # progress_bar.progress(1.0)     
     
-    # Procesar DataFrame de carne nubles
-    if all_nubles_data:
-        df_nubles = pd.DataFrame(all_nubles_data, columns=['Tienda','Categoria','nombre_largo','nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
-        dfs_combinados.append(df_nubles)
+    # # Procesar DataFrame de carne nubles
+    # if all_nubles_data:
+    #     df_nubles = pd.DataFrame(all_nubles_data, columns=['Tienda','Categoria','nombre_largo','nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
+    #     dfs_combinados.append(df_nubles)
         
     # # ======================
     # # PROCESAR DOÑA CARNE
     # # ======================  
-    url_donacarne = {
-    'vacuno':'vacuno',
-    'vacuno?page=2':'vacuno',
-    'vacuno?page=3':'vacuno',
-    'vacuno?page=4':'vacuno',
-    'vacuno?page=5':'vacuno',
-    'ave':'pollo',
-    'ave?page=2':'pollo',
-    'cerdo':'cerdo',
-    'cerdo?page=2':'cerdo',
-    'miscelaneos':'otros',
-    }
+    # url_donacarne = {
+    # 'vacuno':'vacuno',
+    # 'vacuno?page=2':'vacuno',
+    # 'vacuno?page=3':'vacuno',
+    # 'vacuno?page=4':'vacuno',
+    # 'vacuno?page=5':'vacuno',
+    # 'ave':'pollo',
+    # 'ave?page=2':'pollo',
+    # 'cerdo':'cerdo',
+    # 'cerdo?page=2':'cerdo',
+    # 'miscelaneos':'otros',
+    # }
     
-    progress_bar = st.progress(0)
-    status_text = st.empty()
+    # progress_bar = st.progress(0)
+    # status_text = st.empty()
         
-    urls_donacarne = list(url_donacarne.keys())
-    total_urls = len(urls_donacarne)
+    # urls_donacarne = list(url_donacarne.keys())
+    # total_urls = len(urls_donacarne)
 
-    base_donacarne = 'https://ventasonline.xn--doacarne-e3a.cl/collections/'
-    all_donacarne_data = []
+    # base_donacarne = 'https://ventasonline.xn--doacarne-e3a.cl/collections/'
+    # all_donacarne_data = []
 
-    for i, url in enumerate(urls_donacarne):
-        clean_url = f"{base_donacarne}{url.strip()}"
-        categoria = url_donacarne.get(url, 'sin categoria')
-        try:
-            all_donacarne_data.extend(donacarne.extract_donacarne(clean_url, categoria))
-        except Exception as e:
-            print(f"Error en dona carne {clean_url}: {e}")
+    # for i, url in enumerate(urls_donacarne):
+    #     clean_url = f"{base_donacarne}{url.strip()}"
+    #     categoria = url_donacarne.get(url, 'sin categoria')
+    #     try:
+    #         all_donacarne_data.extend(donacarne.extract_donacarne(clean_url, categoria))
+    #     except Exception as e:
+    #         print(f"Error en dona carne {clean_url}: {e}")
             
-    status_text.text(f"Operación completada en dona carne")
-    progress_bar.progress(1.0)     
+    # status_text.text(f"Operación completada en dona carne")
+    # progress_bar.progress(1.0)     
     
-    # Procesar DataFrame de dona carne
-    if all_donacarne_data:
-        df_donacarne = pd.DataFrame(all_donacarne_data, columns=['Tienda','Categoria','nombre_largo','nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
-        dfs_combinados.append(df_donacarne)
+    # # Procesar DataFrame de dona carne
+    # if all_donacarne_data:
+    #     df_donacarne = pd.DataFrame(all_donacarne_data, columns=['Tienda','Categoria','nombre_largo','nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
+    #     dfs_combinados.append(df_donacarne)
     
     # # ======================
     # # PROCESAR EL CARNICERO
@@ -279,111 +279,111 @@ if st.button("Extraer datos"):
     # # ======================
     # # PROCESAR FRIGORIFICO PREMIUM
     # # ======================          
-    url_frigorifico = {
-    'vacuno-1':'vacuno',
-    'vacuno-1?page=2':'vacuno',
-    'vacuno-1?page=3':'vacuno',
-    'cerdo':'cerdo',
-    'exoticos':'cordero',
-    'exoticos?page=2':'cordero'
-    }
+    # url_frigorifico = {
+    # 'vacuno-1':'vacuno',
+    # 'vacuno-1?page=2':'vacuno',
+    # 'vacuno-1?page=3':'vacuno',
+    # 'cerdo':'cerdo',
+    # 'exoticos':'cordero',
+    # 'exoticos?page=2':'cordero'
+    # }
 
-    progress_bar = st.progress(0)
-    status_text = st.empty()
+    # progress_bar = st.progress(0)
+    # status_text = st.empty()
 
-    urls_frigorifico = list(url_frigorifico.keys())
-    total_urls = len(urls_frigorifico)
+    # urls_frigorifico = list(url_frigorifico.keys())
+    # total_urls = len(urls_frigorifico)
 
-    base_frigorifico = 'https://www.frigorificocarnespremium.com/collections/'
-    all_frigorifico_data = []
+    # base_frigorifico = 'https://www.frigorificocarnespremium.com/collections/'
+    # all_frigorifico_data = []
     
-    for i, url in enumerate(urls_frigorifico):
-        clean_url = f"{base_frigorifico}{url.strip()}"
-        categoria = url_frigorifico.get(url, 'sin categoria')
-        try:
-            all_frigorifico_data.extend(frigorifico.extract_frigorificocarnespremium(clean_url, categoria))
-        except Exception as e:
-            print(f"Error en Frigorífico {clean_url}: {e}")
+    # for i, url in enumerate(urls_frigorifico):
+    #     clean_url = f"{base_frigorifico}{url.strip()}"
+    #     categoria = url_frigorifico.get(url, 'sin categoria')
+    #     try:
+    #         all_frigorifico_data.extend(frigorifico.extract_frigorificocarnespremium(clean_url, categoria))
+    #     except Exception as e:
+    #         print(f"Error en Frigorífico {clean_url}: {e}")
       
-    status_text.text(f"Operación completada en frigorifico")
-    progress_bar.progress(1.0)             
+    # status_text.text(f"Operación completada en frigorifico")
+    # progress_bar.progress(1.0)             
     
-    # Procesar DataFrame de frigorifico
-    if all_frigorifico_data:
-        df_frigorifico = pd.DataFrame(all_frigorifico_data, columns=['Tienda','Categoria','nombre_largo','nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
-        dfs_combinados.append(df_frigorifico)
+    # # Procesar DataFrame de frigorifico
+    # if all_frigorifico_data:
+    #     df_frigorifico = pd.DataFrame(all_frigorifico_data, columns=['Tienda','Categoria','nombre_largo','nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
+    #     dfs_combinados.append(df_frigorifico)
           
     # # ======================
     # # PROCESAR PROCARNE
     # # ====================== 
-    url_procarne = {
-        'arrachera-angus-1':'vacuno',
-        'asado-de-tira-angus-laminado-congelado-copia':'vacuno',
-        'asado-de-vacio':'vacuno',
-        'asiento-angus-copia':'vacuno',
-        'choclillo-angus-origen':'vacuno',
-        'costeleta-de-lomo-liso-angus-congelado-copia':'vacuno',
-        'costeleta-de-lomo-liso-angus-congelado-copia':'vacuno',
-        'entrana-cat-u':'vacuno',
-        'entrecot-angus':'vacuno',
-        'estomaguillo-seleccionado-vacio':'vacuno',
-        'filete-angus-con-cordon':'vacuno',
-        'filete-de-punta-paleta-angus-o-flat-iron-copia':'vacuno',
-        'filete-u-nacional':'vacuno',
-        'huachalomo-angus-copia':'vacuno',
-        'lomo-liso-angus-origen-copia':'vacuno',
-        'lomo-vetado-angus-origen-copia':'vacuno',
-        'osobuco-pierna-trozado-congelado':'vacuno',
-        'palanca-angus-copia':'vacuno',
-        'plateada-angus-copia':'vacuno',
-        'pollo-barriga-angus':'vacuno',
-        'pollo-ganso-angus':'vacuno',
-        'poncho-parrillero-aranita-angus':'vacuno',
-        'posta-negra-angus-origen-copia':'vacuno',
-        'posta-rosada':'vacuno',
-        'punta-de-ganso-angus':'vacuno',
-        'punta-picana-angus-origen-copia':'vacuno',
-        'sobrecostilla-seleccionado-pieza':'vacuno',
-        'tapabarriga-pieza-seleccionado':'vacuno',
-        'tomahawk-angus-origencongelado':'vacuno',
-        'bistecpechuga':'pollo',
-        'filetillo-crocante-de-pollo':'pollo',
-        'pechuga-entera-de-pollo-deshuesado':'pollo',
-        'truto-parrillero':'pollo',
-        'bocaditos':'pollo',
-        'filetillo-de-pollo':'pollo',
-        'trutro-corto-de-pollo':'pollo',
-        'trutro-largo-de-pollo':'pollo',
-        'trutro-entero':'pollo',
-        'trutrito-de-ala':'pollo',
-        'pechuga-crocante':'pollo',
-        'pollo-entero':'pollo',
-    }
+    # url_procarne = {
+    #     'arrachera-angus-1':'vacuno',
+    #     'asado-de-tira-angus-laminado-congelado-copia':'vacuno',
+    #     'asado-de-vacio':'vacuno',
+    #     'asiento-angus-copia':'vacuno',
+    #     'choclillo-angus-origen':'vacuno',
+    #     'costeleta-de-lomo-liso-angus-congelado-copia':'vacuno',
+    #     'costeleta-de-lomo-liso-angus-congelado-copia':'vacuno',
+    #     'entrana-cat-u':'vacuno',
+    #     'entrecot-angus':'vacuno',
+    #     'estomaguillo-seleccionado-vacio':'vacuno',
+    #     'filete-angus-con-cordon':'vacuno',
+    #     'filete-de-punta-paleta-angus-o-flat-iron-copia':'vacuno',
+    #     'filete-u-nacional':'vacuno',
+    #     'huachalomo-angus-copia':'vacuno',
+    #     'lomo-liso-angus-origen-copia':'vacuno',
+    #     'lomo-vetado-angus-origen-copia':'vacuno',
+    #     'osobuco-pierna-trozado-congelado':'vacuno',
+    #     'palanca-angus-copia':'vacuno',
+    #     'plateada-angus-copia':'vacuno',
+    #     'pollo-barriga-angus':'vacuno',
+    #     'pollo-ganso-angus':'vacuno',
+    #     'poncho-parrillero-aranita-angus':'vacuno',
+    #     'posta-negra-angus-origen-copia':'vacuno',
+    #     'posta-rosada':'vacuno',
+    #     'punta-de-ganso-angus':'vacuno',
+    #     'punta-picana-angus-origen-copia':'vacuno',
+    #     'sobrecostilla-seleccionado-pieza':'vacuno',
+    #     'tapabarriga-pieza-seleccionado':'vacuno',
+    #     'tomahawk-angus-origencongelado':'vacuno',
+    #     'bistecpechuga':'pollo',
+    #     'filetillo-crocante-de-pollo':'pollo',
+    #     'pechuga-entera-de-pollo-deshuesado':'pollo',
+    #     'truto-parrillero':'pollo',
+    #     'bocaditos':'pollo',
+    #     'filetillo-de-pollo':'pollo',
+    #     'trutro-corto-de-pollo':'pollo',
+    #     'trutro-largo-de-pollo':'pollo',
+    #     'trutro-entero':'pollo',
+    #     'trutrito-de-ala':'pollo',
+    #     'pechuga-crocante':'pollo',
+    #     'pollo-entero':'pollo',
+    # }
     
-    progress_bar = st.progress(0)
-    status_text = st.empty()
+    # progress_bar = st.progress(0)
+    # status_text = st.empty()
         
-    urls_procarne = list(url_procarne.keys())
-    total_urls = len(urls_procarne)    
+    # urls_procarne = list(url_procarne.keys())
+    # total_urls = len(urls_procarne)    
     
-    base_procarne = 'https://www.procarne.cl/products/'
-    all_procarne_data = []
+    # base_procarne = 'https://www.procarne.cl/products/'
+    # all_procarne_data = []
         
-    for i, url in enumerate(urls_procarne):
-        clean_url = f"{base_procarne}{url.strip()}"
-        categoria = url_procarne.get(url, 'sin categoria')
-        try:
-            all_procarne_data.extend(procarne.extract_procarne(clean_url, categoria))
-        except Exception as e:
-            print(f"Error en Procarne {clean_url}: {e}")
+    # for i, url in enumerate(urls_procarne):
+    #     clean_url = f"{base_procarne}{url.strip()}"
+    #     categoria = url_procarne.get(url, 'sin categoria')
+    #     try:
+    #         all_procarne_data.extend(procarne.extract_procarne(clean_url, categoria))
+    #     except Exception as e:
+    #         print(f"Error en Procarne {clean_url}: {e}")
             
-    status_text.text(f"Operación completada en procarne")
-    progress_bar.progress(1.0)             
+    # status_text.text(f"Operación completada en procarne")
+    # progress_bar.progress(1.0)             
      
-    # Procesar DataFrame de procarne
-    if all_procarne_data:
-        df_procarne = pd.DataFrame(all_procarne_data, columns=['Tienda','Categoria','nombre_largo','nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
-        dfs_combinados.append(df_procarne)    
+    # # Procesar DataFrame de procarne
+    # if all_procarne_data:
+    #     df_procarne = pd.DataFrame(all_procarne_data, columns=['Tienda','Categoria','nombre_largo','nombre_simple', 'precio_neto_kg', 'precio_neto_total'])
+    #     dfs_combinados.append(df_procarne)    
           
     # ========================
     # 3. COMBINAR Y LIMPIAR TODOS LOS DATOS
