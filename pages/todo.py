@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime 
 import time
 from config import CONFIG_TIENDAS
-from utils.scraper import procesar_tienda
+from utils.scraper import procesar_tienda, contar_total_urls
 
 st.set_page_config(page_title="Carnes CL", layout="wide", page_icon="🥩")
 
@@ -61,29 +61,41 @@ with st.container():
     with col1:  
         if st.button("Procesar", icon="▶"):
             
+            # === BARRA DE PROGRESO GLOBAL ===
+            total_global = contar_total_urls(CONFIG_TIENDAS)
+            global_progress = st.progress(0)
+            global_counter = [0]  # Lista mutable para pasar por referencia
+            
+            
             # Lista para acumular todos los DataFrames
             dfs_combinados = []
 
+            progress_container = st.empty()
+            
             # Procesar cada tienda configurada
             for nombre, config in CONFIG_TIENDAS.items():
-                st.write(f"🛒 Procesando: {nombre.title()}")
+                with progress_container.container():
+                    st.caption(f"Procesando: {nombre.title()}")
+                    
+                    df_result = procesar_tienda(
+                        nombre_tienda=nombre,
+                        urls_dict=config['urls'],
+                        base_url=config['base_url'],
+                        extract_function=config['extractor'],
+                        columns=config['columns'],
+                        global_progress=global_progress,
+                        global_counter=global_counter,
+                        global_total=total_global
+                    )
+                    
+                    if df_result is not None:
+                        dfs_combinados.append(df_result)
+                        # st.success(f"✅ {len(df_result)} productos extraídos de {nombre}")
+                    else:
+                        st.warning(f"⚠️ No se obtuvieron datos de {nombre}")
+                    
+            progress_container.empty()
                 
-                df_result = procesar_tienda(
-                    nombre_tienda=nombre,
-                    urls_dict=config['urls'],
-                    base_url=config['base_url'],
-                    extract_function=config['extractor'],
-                    columns=config['columns']
-                )
-                
-                if df_result is not None:
-                    dfs_combinados.append(df_result)
-                    st.success(f"✅ {len(df_result)} productos extraídos de {nombre}")
-                else:
-                    st.warning(f"⚠️ No se obtuvieron datos de {nombre}")
-                
-                # st.divider()  # Línea separadora visual entre tiendas
-
             # ================================
             # COMBINAR TODOS LOS DATAFRAMES
             # ================================
@@ -112,7 +124,7 @@ with st.container():
             state.tienda = []
             state.corte = ''
             state.df_filtro = None
-            state.detener = True
+            st.rerun()
            
 # Estados de los filtros    
 if state.df_filtro is not None:
