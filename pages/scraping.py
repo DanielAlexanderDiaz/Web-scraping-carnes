@@ -2,8 +2,7 @@ import streamlit as st
 import pandas as pd
 import time
 from config import CONFIG_TIENDAS
-from scrapers import extract_agrocomercial, extract_ariztia
-from utils.scraper import procesar_tienda, estimate_eta
+from utils.scraper import procesar_tienda
 
 # Lista para acumular todos los DataFrames
 dfs_combinados = []
