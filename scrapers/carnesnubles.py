@@ -2,18 +2,9 @@ from bs4 import BeautifulSoup
 import requests
 import re
 from math import ceil
+from .utils import generar_nombre_producto
 
-def generar_nombre_producto(nombre_original, etiqueta_encontrada):
-    if not etiqueta_encontrada:
-        return re.sub(r'\s+', ' ', nombre_original).strip().title()
-    
-    principal = etiqueta_encontrada[0].title()
-    
-    nombre_final = f'{principal}'
-    
-    return nombre_final
-
-def extract_carnes_nubles(url, categoria='sin categoria'):
+def extract_carnesnubles(url, categoria='sin categoria'):
     response = requests.get(url)
     data = []
     if response.status_code == 200:

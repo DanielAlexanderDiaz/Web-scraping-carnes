@@ -1,16 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import re
-
-def generar_nombre_producto(nombre_original, etiqueta_encontrada):
-    if not etiqueta_encontrada:
-        return re.sub(r'\s+', ' ', nombre_original).strip().title()
-    
-    principal = etiqueta_encontrada[0].title()
-    
-    nombre_final = f'{principal}'
-    
-    return nombre_final
+from .utils import generar_nombre_producto
 
 def extract_ariztia(url, categoria='sin categoria'):
     response = requests.get(url)

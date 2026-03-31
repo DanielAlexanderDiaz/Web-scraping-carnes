@@ -2,17 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 import re
 from math import ceil
-
-def generar_nombre_producto(nombre_original, etiqueta_encontrada):
-    if not etiqueta_encontrada:
-        return re.sub(r'\s+', ' ', nombre_original).strip().title()
-    
-    principal = etiqueta_encontrada[0].title()
-    
-    nombre_final = f'{principal}'
-    
-    return nombre_final
-    
+from .utils import generar_nombre_producto    
 
 def extract_agrocomercial(url, categoria='sin categoria'):
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'}

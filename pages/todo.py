@@ -1,14 +1,8 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime 
-import util.agrocomercial as agrocomercial
-import util.ariztia as ariztia
-import util.carnesapunto as carnesapunto
-import util.carnesnubles as carnesnubles
-import util.donacarne as donacarne
-import util.elcarnicero as elcarnicero
-import util.frigorifico as frigorifico
-import util.procarne as procarne
+import time
+from scrapers import extract_agrocomercial, extract_ariztia
 
 st.set_page_config(page_title="Carnes CL", layout="wide", page_icon="🥩")
 
@@ -29,26 +23,31 @@ if 'corte' not in state:
 if 'df_filtro' not in state:
     state.df_filtro = None
     
-#filtro
-with st.container(border=True):
-    c1,c2,c3,c4,c5 = st.columns(5)
-    with c1:
+filtros = st.container(
+    horizontal=True,
+    gap="small",
+    vertical_alignment="bottom",
+    border=True
+)
+
+with filtros:
+    
         nombre = st.text_input("Nombre del producto", value=state.nombre)
         if nombre!=state.nombre:
             state.nombre = nombre   
-    with c2:
+            
         categoria = st.multiselect("Categorias", ['vacuno', 'pollo', 'cerdo', 'cordero', 'pavo','otros']) 
         if categoria!=state.categoria:
             state.categoria = categoria
-    with c3:
+            
         corte = st.text_input("Corte", value=state.corte)
         if corte!=state.corte:
             state.corte = corte
-    with c4:
+            
         tienda = st.multiselect("Tiendas", ['agrocomercial','ariztia','carnes Apunto','carnes nubles','dona carne', 'el carnicero','frigorifico premium','procarne'])
         if tienda!=state.tienda:
-            state.tienda = tienda       
-    with c5:
+            state.tienda = tienda    
+               
         if st.button("Limpiar filtros"):
             state.categoria = []
             state.nombre = ''
@@ -56,11 +55,8 @@ with st.container(border=True):
             state.corte = ''
             state.df_filtro = None 
     
-
 with st.container():
-
     col1, col2 = st.columns(2)
-    
     with col1:  
         if st.button("▶"):
         
@@ -89,7 +85,7 @@ with st.container():
                 clean_url = f"{base_agro}{url.strip()}"
                 categoria = url_agro.get(url, 'sin categoria')
                 try:
-                    all_agro_data.extend(agrocomercial.extract_agrocomercial(clean_url, categoria))
+                    all_agro_data.extend(extract_agrocomercial(clean_url, categoria))
                 except Exception as e:
                     print(f"Error en agrocomercial {clean_url}: {e}")
                 progress_bar.progress((i + 1) / total_urls)
@@ -106,41 +102,53 @@ with st.container():
             # ================
             # PROCESAR ARIZTIA
             # ================
-            # url_ariz = {
-            #     'pollo.html':'pollo', 'pollo.html?p=2':'pollo', 'pollo.html?p=3':'pollo','pollo.html?p=4':'pollo', 'pollo.html?p=5':'pollo', 'pollo.html?p=6':'pollo',
-            #     'pavo.html':'pavo', 'pavo.html?p=2':'pavo', 'cerdo.html':'cerdo','vacuno.html':'vacuno', 'vacuno.html?p=2':'vacuno','congelados/hamburguesas.html':'otros',
-            #     'congelados/productos-churrasco-lomito-y-bistec.html':'otros','congelados/nuggets-y-apanados.html':'otros',
-            # }
+            url_ariz = {
+                'pollo.html':'pollo', 'pollo.html?p=2':'pollo', 'pollo.html?p=3':'pollo','pollo.html?p=4':'pollo', 'pollo.html?p=5':'pollo', 'pollo.html?p=6':'pollo',
+                'pavo.html':'pavo', 'pavo.html?p=2':'pavo', 'cerdo.html':'cerdo','vacuno.html':'vacuno', 'vacuno.html?p=2':'vacuno','congelados/hamburguesas.html':'otros',
+                'congelados/productos-churrasco-lomito-y-bistec.html':'otros','congelados/nuggets-y-apanados.html':'otros',
+            }
             
-            # urls_ariz = list(url_ariz.keys())
-            # total_urls = len(urls_ariz)
+            urls_ariz = list(url_ariz.keys())
+            total_urls = len(urls_ariz)
             
-            # progress_bar = st.progress(0)
-            # status_text = st.empty()
-            # base_ariz = 'https://www.ariztiaatucasa.cl/'
-            # all_ariz_data = []
+            progress_bar = st.progress(0)
+            status_text = st.empty()
+            timer_text = st.empty()
             
-            # for i, url in enumerate(urls_ariz):
-            #     clean_url = f"{base_ariz}{url.strip()}"
-            #     categoria = url_ariz.get(url, 'sin categoria')
-            #     try:
-            #         all_ariz_data.extend(ariztia.extract_ariztia(clean_url, categoria))
-            #     except Exception as e:
-            #         print(f"Error en ariztia {clean_url}: {e}")
-            #     progress_bar.progress((i + 1) / total_urls)
-            #     status_text.text(f"ariztia en proceso... ({i + 1}/{total_urls})")
+            base_ariz = 'https://www.ariztiaatucasa.cl/'
+            all_ariz_data = []
             
-            # status_text.text(f"Operación completada en ariztia")
-            # progress_bar.progress(1.0)
+            start_time = time.time()
             
-            # # Procesar DataFrame de ariztia
-            # if all_ariz_data:
-            #     df_ariz = pd.DataFrame(all_ariz_data, columns=['Tienda','Categoria','Corte','Nombre Pagina','Precio x KG(neto)','precio pagina'])
-            #     dfs_combinados.append(df_ariz)
+            for i, url in enumerate(urls_ariz):
+                clean_url = f"{base_ariz}{url.strip()}"
+                categoria = url_ariz.get(url, 'sin categoria')
+                try:
+                    all_ariz_data.extend(extract_ariztia(clean_url, categoria))
+                except Exception as e:
+                    print(f"Error en ariztia {clean_url}: {e}")
+                    
+                progress_bar.progress((i + 1) / total_urls)
+                elapsed_time = time.time() - start_time
+                
+                mins, secs = divmod(elapsed_time, 60)
+                time_formatted = f"Tiempo transcurrido: {int(mins)} minutos {int(secs)} segundos"
+                
+                status_text.text(f'ariztia en proceso... ({i + 1}/{total_urls})')
+                timer_text.text(f'tiempo transcurrido: {time_formatted} {elapsed_time:.1f} segundos')
             
-            # # ======================
-            # # PROCESAR CARNES APUNTO
-            # # ======================
+            status_text.text(f"Operación completada en ariztia")
+            timer_text.text(f'tiempo total: {time_formatted} {elapsed_time:.1f} segundos')
+            progress_bar.progress(1.0)
+            
+            # Procesar DataFrame de ariztia
+            if all_ariz_data:
+                df_ariz = pd.DataFrame(all_ariz_data, columns=['Tienda','Categoria','Corte','Nombre Pagina','Precio x KG(neto)','precio pagina'])
+                dfs_combinados.append(df_ariz)
+            
+            # ======================
+            # PROCESAR CARNES APUNTO
+            # ======================
             # url_carnes_apunto = {
             #     'filete-bife':'vacuno','lomo-liso-c-hueso-chuleton-a-punto':'vacuno','entrecot-a-punto':'vacuno','box-edition-lomo-liso-bife':'vacuno','box-edition-medallon-de-filete':'vacuno',
             #     'box-edition-tomahawk':'vacuno','box-edition-lomo-vetado-bife':'vacuno','hamburguesa-chuck-roll':'vacuno','hamburguesa-brisket':'vacuno','mollejas-a-punto':'vacuno',
@@ -170,7 +178,7 @@ with st.container():
             #     clean_url = f"{base_apunto}{url.strip()}"
             #     categoria = url_carnes_apunto.get(url, 'sin categoria')
             #     try:
-            #         all_apunto_data.extend(carnesapunto.extract_carnes_apunto(clean_url, categoria))
+            #         all_apunto_data.extend(extract_carnesapunto(clean_url, categoria))
             #     except Exception as e:
             #         print(f"Error en agrocomercial {clean_url}: {e}")
             #     progress_bar.progress((i + 1) / total_urls)
@@ -207,7 +215,7 @@ with st.container():
             #     clean_url = f"{base_nubles}{url.strip()}"
             #     categoria = url_carnes_nubles.get(url, 'sin categoria')
             #     try:
-            #         all_nubles_data.extend(carnesnubles.extract_carnes_nubles(clean_url, categoria))
+            #         all_nubles_data.extend(extract_carnesnubles(clean_url, categoria))
             #     except Exception as e:
             #         print(f"Error en Carnes Ñubles {clean_url}: {e}")
             #     progress_bar.progress((i + 1) / total_urls)
@@ -250,7 +258,7 @@ with st.container():
             #     clean_url = f"{base_donacarne}{url.strip()}"
             #     categoria = url_donacarne.get(url, 'sin categoria')
             #     try:
-            #         all_donacarne_data.extend(donacarne.extract_donacarne(clean_url, categoria))
+            #         all_donacarne_data.extend(extract_donacarne(clean_url, categoria))
             #     except Exception as e:
             #         print(f"Error en doña carne {clean_url}: {e}")
             #     progress_bar.progress((i + 1) / total_urls)
@@ -286,7 +294,7 @@ with st.container():
             #     clean_url = f"{base_carnicero}{url.strip()}"
             #     categoria = url_carnicero.get(url, 'sin categoria')
             #     try:
-            #         all_carnicero_data.extend(elcarnicero.extract_elcarnicero(clean_url, categoria))
+            #         all_carnicero_data.extend(extract_elcarnicero(clean_url, categoria))
             #     except Exception as e:
             #         print(f"Error en El Carnicero {clean_url}: {e}")
             #     progress_bar.progress((i + 1) / total_urls)
@@ -325,7 +333,7 @@ with st.container():
             #     clean_url = f"{base_frigorifico}{url.strip()}"
             #     categoria = url_frigorifico.get(url, 'sin categoria')
             #     try:
-            #         all_frigorifico_data.extend(frigorifico.extract_frigorificocarnespremium(clean_url, categoria))
+            #         all_frigorifico_data.extend(extract_frigorifico(clean_url, categoria))
             #     except Exception as e:
             #         print(f"Error en Frigorífico {clean_url}: {e}")
             #     progress_bar.progress((i + 1) / total_urls)
@@ -399,7 +407,7 @@ with st.container():
             #     clean_url = f"{base_procarne}{url.strip()}"
             #     categoria = url_procarne.get(url, 'sin categoria')
             #     try:
-            #         all_procarne_data.extend(procarne.extract_procarne(clean_url, categoria))
+            #         all_procarne_data.extend(extract_procarne(clean_url, categoria))
             #     except Exception as e:
             #         print(f"Error en Procarne {clean_url}: {e}")
             #     progress_bar.progress((i + 1) / total_urls)
@@ -433,7 +441,6 @@ with st.container():
             else:
                 st.warning("⚠️ No se encontraron datos en ninguna de las fuentes")
                 state.df_filtro = None        
-    
     with col2:
         if st.button("⏹"):
             state.categoria = []
@@ -474,18 +481,35 @@ if state.df_filtro is not None:
     if filtro_tienda and len(filtro_tienda) > 0:
         filtro_tienda_clean = [tienda.split(' ', 1)[1] if ' ' in tienda else tienda for tienda in filtro_tienda]
         df_display = df_display[df_display['Tienda'].isin(filtro_tienda_clean)]
+        
+    df_display['nuevo precio'] = df_display['precio pagina'] * 1.19
     
     if not df_display.empty:
         
-        st.dataframe(
-            df_display.sort_values('Precio x KG(neto)', ascending=True),
-            width='stretch',
-            hide_index=True
-        )
+        tab1, tab2 = st.tabs(["📈 Estadisticas", "🔎 Resultados"])
+        with tab1:
+            col1, col2 = st.columns(2)
+            with col1:
+                st.subheader("📈 Estadisticas")
+            
+                st.subheader("💰 Precio promedio por Tienda")
+                precio_por_tienda = df_display.groupby('Tienda')['Precio x KG(neto)'].mean().sort_values(ascending=False)
+                st.bar_chart(precio_por_tienda)
+            with col2:
+                st.subheader("💰 Precio promedio por Categoria")
+                precio_por_categoria = df_display.groupby('Categoria')['Precio x KG(neto)'].mean().sort_values(ascending=False)
+                st.bar_chart(precio_por_categoria)
+        with tab2:
+            st.subheader("🔎 Resultados")
+            st.dataframe(
+                df_display.sort_values('Precio x KG(neto)', ascending=True),
+                width='stretch',
+                hide_index=True
+            )
         
-        total = len(df_display)
-        if total > 0:
-            st.write(f'Datos encontrados: {total} ')
+            total = len(df_display)
+            if total > 0:
+                st.write(f'Datos encontrados: {total} ')
         
     else:
         st.warning("No se encontraron productos con los filtros seleccionados", icon="⚠️")
