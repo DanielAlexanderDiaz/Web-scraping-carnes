@@ -25,7 +25,7 @@ if 'df_filtro' not in state:
     state.df_filtro = None
     
 
-with st.expander("filtros"):
+with st.expander("Filtros"):
     filtros = st.container(
         horizontal=True,
         gap="small",
@@ -106,7 +106,7 @@ with st.container():
             df_limpio = df_macro.drop_duplicates(keep='first')
                 
             # Convertir columnas numéricas
-            columnas_numericas = ['Precio x KG(neto)', 'precio pagina']
+            columnas_numericas = ['Precio x KG', 'Precio Pagina']
             df_limpio[columnas_numericas] = df_limpio[columnas_numericas].apply(pd.to_numeric, errors='coerce')
                 
             # Guardar en la variable única
@@ -148,38 +148,41 @@ if state.df_filtro is not None:
         filtro_tienda_clean = [tienda.split(' ', 1)[1] if ' ' in tienda else tienda for tienda in filtro_tienda]
         df_display = df_display[df_display['Tienda'].isin(filtro_tienda_clean)]
         
-    df_display['nuevo precio'] = df_display['precio pagina'] * 1.19
+    # df_display['nuevo precio'] = df_display['precio pagina'] * 1.19
     
     if not df_display.empty:
         
         tab1, tab2 = st.tabs(["📈 Estadisticas", "🔎 Resultados"])
         with tab1:
-            col1, col2 = st.columns(2)
-            with col1:
-                st.subheader("📈 Estadisticas")
-            
-                st.subheader("💰 Precio promedio por Tienda")
-                precio_por_tienda = df_display.groupby('Tienda')['Precio x KG(neto)'].mean().sort_values(ascending=False)
-                st.bar_chart(precio_por_tienda)
-            with col2:
-                st.subheader("💰 Precio promedio por Categoria")
-                precio_por_categoria = df_display.groupby('Categoria')['Precio x KG(neto)'].mean().sort_values(ascending=False)
-                st.bar_chart(precio_por_categoria)
-        with tab2:
             st.subheader("🔎 Resultados")
             st.dataframe(
-                df_display.sort_values('Precio x KG(neto)', ascending=True),
+                df_display.sort_values('Precio x KG', ascending=True),
                 width='stretch',
                 hide_index=True
             )
-        
+            
+        with tab2:
             total = len(df_display)
             if total > 0:
                 st.write(f'Datos encontrados: {total} ')
+                
+            col1, col2 = st.columns(2)
+            with col1:
+                st.subheader("💰 Precio promedio por Categoria")
+                precio_por_categoria = df_display.groupby('Categoria')['Precio x KG'].mean().sort_values(ascending=False)
+                st.bar_chart(precio_por_categoria)
+            with col2:
+                st.subheader("📈 Estadisticas")
+            
+                st.subheader("💰 Precio promedio por Tienda")
+                precio_por_tienda = df_display.groupby('Tienda')['Precio x KG'].mean().sort_values(ascending=False)
+                st.bar_chart(precio_por_tienda)
         
     else:
         st.warning("No se encontraron productos con los filtros seleccionados", icon="⚠️")
         
+st.divider()
+st.badge("Ingresar al link del producto para ver sus caracteristicas")
 
             
 

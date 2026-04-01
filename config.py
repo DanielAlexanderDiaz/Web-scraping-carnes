@@ -3,32 +3,33 @@ from scrapers import extract_agrocomercial, extract_ariztia, extract_carnesapunt
 # CONFIGURACIÓN DE TIENDAS
 # ================================
 CONFIG_TIENDAS = {
-    'agrocomercial': {
-        'base_url': 'https://agrocomercial.cl/product-category/',
-        'urls': {
-            'vacuno/': 'vacuno', 
-            'aves/pollo/': 'pollo', 
-            'cerdo/': 'cerdo',
-            'cordero/': 'cordero', 
-            'aves/pavo/': 'pavo'
-        },
-        'extractor': extract_agrocomercial,
-        'columns': ['Tienda','Categoria','Corte','Nombre Pagina','Precio x KG(neto)','precio pagina']
-    },
-    # 'ariztia': {
-    #     'base_url': 'https://www.ariztiaatucasa.cl/',
+    # 'agrocomercial': {
+    #     'base_url': 'https://agrocomercial.cl/product-category/',
     #     'urls': {
-    #         'pollo.html':'pollo', 'pollo.html?p=2':'pollo', 'pollo.html?p=3':'pollo',
-    #         'pollo.html?p=4':'pollo', 'pollo.html?p=5':'pollo', 'pollo.html?p=6':'pollo',
-    #         'pavo.html':'pavo', 'pavo.html?p=2':'pavo', 'cerdo.html':'cerdo',
-    #         'vacuno.html':'vacuno', 'vacuno.html?p=2':'vacuno',
-    #         'congelados/hamburguesas.html':'otros',
-    #         'congelados/productos-churrasco-lomito-y-bistec.html':'otros',
-    #         'congelados/nuggets-y-apanados.html':'otros',
+    #         'vacuno/': 'vacuno', 
+    #         'aves/pollo/': 'pollo', 
+    #         'cerdo/': 'cerdo',
+    #         'cordero/': 'cordero', 
+    #         'aves/pavo/': 'pavo'
     #     },
-    #     'extractor': extract_ariztia,
-    #     'columns': ['Tienda','Categoria','Corte','Nombre Pagina','Precio x KG(neto)','precio pagina']
+    #     'extractor': extract_agrocomercial,
+    #     'columns': ['Tienda','Categoria','Corte','Nombre Pagina','Precio x KG','Precio Pagina']
     # },
+    'ariztia': {
+        'base_url': 'https://www.ariztiaatucasa.cl/',
+        'urls': {
+            'pollo.html':'pollo', 
+            # 'pollo.html?p=2':'pollo', 'pollo.html?p=3':'pollo',
+            # 'pollo.html?p=4':'pollo', 'pollo.html?p=5':'pollo', 'pollo.html?p=6':'pollo',
+            # 'pavo.html':'pavo', 'pavo.html?p=2':'pavo', 'cerdo.html':'cerdo',
+            # 'vacuno.html':'vacuno', 'vacuno.html?p=2':'vacuno',
+            # 'congelados/hamburguesas.html':'otros',
+            # 'congelados/productos-churrasco-lomito-y-bistec.html':'otros',
+            # 'congelados/nuggets-y-apanados.html':'otros',
+        },
+        'extractor': extract_ariztia,
+        'columns': ['Tienda','Categoria','Corte','Nombre Pagina','Precio x KG','Precio Pagina']
+    },
     # 'carnesapunto': {
     #     'base_url': 'https://tienda.carnesapunto.cl/products/',
     #     'urls': {

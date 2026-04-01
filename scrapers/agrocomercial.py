@@ -63,23 +63,12 @@ def extract_agrocomercial(url, categoria='sin categoria'):
             kg_int = int(kg)
             precio_bruto_total = int((precio_final))
             precio_bruto_kg = ceil(precio_bruto_total/kg_int)
-            precio_neto_total = ceil(precio_bruto_total/1.19)
-            precio_neto_kg = ceil(precio_bruto_kg/1.19)
-            nombre_largo = solo_nombre
-            
+            corte = generar_nombre_producto(nombre_lower, etiquetas_encontradas)
+        
             try:    
                 if solo_nombre != 'sin data':
-                        
-                    corte = generar_nombre_producto(nombre_lower, etiquetas_encontradas)
-                        
-                    data.append([nombre_tienda,categoria,corte,nombre_largo,precio_neto_kg,precio_neto_total])  
-                        
-                    # print(nombre_tienda,categoria,nombre_largo) 
-                    # print(nombre_lower)
-                    # print(etiquetas_encontradas)    
-                    # print(etiquetas_encontradas, peso_encontrado.group(0))
-                    # print(f"Peso detectado: {peso_encontrado.group(0)}") # Salida: 5 kg
-                        
+                    data.append([nombre_tienda,categoria,corte,nombre,precio_bruto_kg,precio_bruto_total])  
+                                       
             except (ValueError, ZeroDivisionError) as e:
                 print(f"Error procesando producto: {nombre} - {e}")
                 continue

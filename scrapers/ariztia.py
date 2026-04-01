@@ -1,7 +1,18 @@
 from bs4 import BeautifulSoup
 import requests
 import re
-from .utils import generar_nombre_producto
+# from .utils import generar_nombre_producto
+
+def generar_nombre_producto(nombre_original, etiqueta_encontrada):
+    
+    if not etiqueta_encontrada:
+        return re.sub(r'\s+', ' ', nombre_original).strip().title()
+    
+    principal = etiqueta_encontrada[0].title()
+    
+    nombre_final = f'{principal}'
+    
+    return nombre_final
 
 def extract_ariztia(url, categoria='sin categoria'):
     response = requests.get(url)
@@ -31,23 +42,10 @@ def extract_ariztia(url, categoria='sin categoria'):
             if not link_tag:
                 continue
             nombre_producto = link_tag.text.strip()
-
-            # Limpiar "aprox." y puntos innecesarios
-            texto_limpio = re.sub(r'\baprox\.?|\.', '', nombre_producto, flags=re.IGNORECASE).strip()
             
             nombre_lower = nombre_producto.lower()
             
             etiquetas_encontradas = [palabra for palabra in palabras_claves if palabra in nombre_lower]
-
-            # Extraer nombre, cantidad y unidad
-            patron_nombre = re.compile(r'^(.*?)\s+(\d+(?:[.,]\d+)?)\s*(kg|gr)\b', re.IGNORECASE)
-            match_nombre = patron_nombre.search(texto_limpio)
-            if not match_nombre:
-                continue
-
-            nombre = match_nombre.group(1).strip()
-            cantidad = match_nombre.group(2)
-            unidad = match_nombre.group(3).lower()
 
             # Buscar el precio por kg
             precio_origen = producto.find('span', class_='precio-kilo')
@@ -59,35 +57,28 @@ def extract_ariztia(url, categoria='sin categoria'):
             match_precio = patron_precio.search(precio_texto)
             if not match_precio:
                 continue
-
+            
             numero_str = match_precio.group(1)
             valor_limpio = numero_str.replace('.', '')
             valor_numerico = int(valor_limpio)
-
-            precio_neto_kg = int(valor_numerico / 1.19)    
-            nombre_largo = nombre_producto.lstrip()
-            precio_neto_total = 0 
             
+            precio_total_final = 0 
+            precio_bruto_kg = int(valor_numerico)    
+            nombre_largo = nombre_producto.lstrip()
+            corte = generar_nombre_producto(nombre_lower, etiquetas_encontradas)
+
             try:      
-                if nombre_largo != 'sin data':       
-                    
-                    corte = generar_nombre_producto(nombre_lower, etiquetas_encontradas)
-                       
-                    data.append([
-                                nombre_tienda,
-                                categoria,
-                                corte,
-                                nombre_largo,
-                                precio_neto_kg, 
-                                precio_neto_total
-                                ])   
+                if nombre_largo != 'sin data':
+                    data.append([nombre_tienda,categoria,corte,nombre_largo,precio_bruto_kg,precio_total_final])   
                         
             except (ValueError, ZeroDivisionError) as e:
                 print(f"Error procesando producto: {nombre_largo} - {e}")
                 continue
-                        
+                    
         print(f"Datos extraídos de Ariztía: {url}")
     else:
         print(f"Error al acceder a Ariztía {url}. Código: {response.status_code}")
 
     return data
+
+
