@@ -24,108 +24,98 @@ if 'corte' not in state:
 if 'df_filtro' not in state:
     state.df_filtro = None
     
-filtros = st.container(
-    horizontal=True,
-    gap="small",
-    vertical_alignment="bottom",
-    border=True
-)
 
-with filtros:
-    
-        nombre = st.text_input("Nombre del producto", value=state.nombre)
-        if nombre!=state.nombre:
-            state.nombre = nombre   
-            
-        categoria = st.multiselect("Categorias", ['vacuno', 'pollo', 'cerdo', 'cordero', 'pavo','otros']) 
-        if categoria!=state.categoria:
-            state.categoria = categoria
-            
-        corte = st.text_input("Corte", value=state.corte)
-        if corte!=state.corte:
-            state.corte = corte
-            
-        tienda = st.multiselect("Tiendas", ['agrocomercial','ariztia','carnes Apunto','carnes nubles','dona carne', 'el carnicero','frigorifico premium','procarne'])
-        if tienda!=state.tienda:
-            state.tienda = tienda    
-               
-        if st.button("Limpiar filtros"):
-            state.categoria = []
-            state.nombre = ''
-            state.tienda = []
-            state.corte = ''
-            state.df_filtro = None 
+with st.expander("filtros"):
+    filtros = st.container(
+        horizontal=True,
+        gap="small",
+        vertical_alignment="bottom"
+    )
+
+    with filtros:
+        
+            nombre = st.text_input("Nombre del producto", value=state.nombre)
+            if nombre!=state.nombre:
+                state.nombre = nombre   
+                
+            categoria = st.multiselect("Categorias", ['vacuno', 'pollo', 'cerdo', 'cordero', 'pavo','otros']) 
+            if categoria!=state.categoria:
+                state.categoria = categoria
+                
+            corte = st.text_input("Corte", value=state.corte)
+            if corte!=state.corte:
+                state.corte = corte
+                
+            tienda = st.multiselect("Tiendas", ['agrocomercial','ariztia','carnes Apunto','carnes nubles','dona carne', 'el carnicero','frigorifico premium','procarne'])
+            if tienda!=state.tienda:
+                state.tienda = tienda    
+                
+            if st.button("Limpiar filtros"):
+                state.categoria = []
+                state.nombre = ''
+                state.tienda = []
+                state.corte = ''
+                state.df_filtro = None 
     
 with st.container():
-    col1, col2 = st.columns(2)
-    with col1:  
-        if st.button("Procesar", icon="▶"):
+    if st.button("Iniciar", icon="▶"):
             
-            # === BARRA DE PROGRESO GLOBAL ===
-            total_global = contar_total_urls(CONFIG_TIENDAS)
-            global_progress = st.progress(0)
-            global_counter = [0]  # Lista mutable para pasar por referencia
-            
-            
-            # Lista para acumular todos los DataFrames
-            dfs_combinados = []
+        # === BARRA DE PROGRESO GLOBAL ===
+        total_global = contar_total_urls(CONFIG_TIENDAS)
+        global_progress = st.progress(0)
+        global_counter = [0]  # Lista mutable para pasar por referencia
+                
+        # Lista para acumular todos los DataFrames
+        dfs_combinados = []
 
-            progress_container = st.empty()
+        progress_container = st.empty()
             
-            # Procesar cada tienda configurada
-            for nombre, config in CONFIG_TIENDAS.items():
-                with progress_container.container():
-                    st.caption(f"Procesando: {nombre.title()}")
+        # Procesar cada tienda configurada
+        for nombre, config in CONFIG_TIENDAS.items():
+            with progress_container.container():
+                st.caption(f"Procesando: {nombre.title()}")
                     
-                    df_result = procesar_tienda(
-                        nombre_tienda=nombre,
-                        urls_dict=config['urls'],
-                        base_url=config['base_url'],
-                        extract_function=config['extractor'],
-                        columns=config['columns'],
-                        global_progress=global_progress,
-                        global_counter=global_counter,
-                        global_total=total_global
-                    )
+                df_result = procesar_tienda(
+                    nombre_tienda=nombre,
+                    urls_dict=config['urls'],
+                    base_url=config['base_url'],
+                    extract_function=config['extractor'],
+                    columns=config['columns'],
+                    global_progress=global_progress,
+                    global_counter=global_counter,
+                    global_total=total_global
+                )
                     
-                    if df_result is not None:
-                        dfs_combinados.append(df_result)
-                        # st.success(f"✅ {len(df_result)} productos extraídos de {nombre}")
-                    else:
-                        st.warning(f"⚠️ No se obtuvieron datos de {nombre}")
+                if df_result is not None:
+                    progress_container.empty()
+                    dfs_combinados.append(df_result)
+                    # st.success(f"✅ {len(df_result)} productos extraídos de {nombre}")
+                else:
+                    st.warning(f"⚠️ No se obtuvieron datos de {nombre}")
                     
-            progress_container.empty()
+        progress_container.empty()
                 
-            # ================================
-            # COMBINAR TODOS LOS DATAFRAMES
-            # ================================
-            if dfs_combinados:
-                # Concatenar todos los DataFrames
-                df_macro = pd.concat(dfs_combinados, ignore_index=True)
+        # ================================
+        # COMBINAR TODOS LOS DATAFRAMES
+        # ================================
+        if dfs_combinados:
+            # Concatenar todos los DataFrames
+            df_macro = pd.concat(dfs_combinados, ignore_index=True)
                 
-                # Eliminar duplicados globales
-                df_limpio = df_macro.drop_duplicates(keep='first')
+            # Eliminar duplicados globales
+            df_limpio = df_macro.drop_duplicates(keep='first')
                 
-                # Convertir columnas numéricas
-                columnas_numericas = ['Precio x KG(neto)', 'precio pagina']
-                df_limpio[columnas_numericas] = df_limpio[columnas_numericas].apply(pd.to_numeric, errors='coerce')
+            # Convertir columnas numéricas
+            columnas_numericas = ['Precio x KG(neto)', 'precio pagina']
+            df_limpio[columnas_numericas] = df_limpio[columnas_numericas].apply(pd.to_numeric, errors='coerce')
                 
-                # Guardar en la variable única
-                state.df_filtro = df_limpio
+            # Guardar en la variable única
+            state.df_filtro = df_limpio
             
-            else:
-                st.warning("⚠️ No se encontraron datos en ninguna de las fuentes")
-                state.df_filtro = None   
-       
-    with col2:
-        if st.button("⏹"):
-            state.categoria = []
-            state.nombre = ''
-            state.tienda = []
-            state.corte = ''
-            state.df_filtro = None
-            st.rerun()
-           
+        else:
+            st.warning("⚠️ No se encontraron datos en ninguna de las fuentes")
+            state.df_filtro = None   
+                 
 # Estados de los filtros    
 if state.df_filtro is not None:
     df = state.df_filtro.copy()
