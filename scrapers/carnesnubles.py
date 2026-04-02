@@ -56,8 +56,8 @@ def extract_carnesnubles(url, categoria='sin categoria'):
                 categoria,
                 corte,
                 nombre_largo,
-                precio_neto_kg,
-                precio_neto_total
+                precio_neto_total,
+                precio_neto_kg
             ])
             
             print(f"Datos extraidos de {url}")

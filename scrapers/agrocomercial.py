@@ -26,7 +26,6 @@ def extract_agrocomercial(url, categoria='sin categoria'):
             ]
         
         for producto in productos:
-            
             solo_nombre = 'sin data'
             kg = 1
             nombre_tag = producto.find('h2', class_='woocommerce-loop-product__title')
@@ -37,10 +36,7 @@ def extract_agrocomercial(url, categoria='sin categoria'):
             nombre_lower = nombre.lower()
             
             etiquetas_encontradas = [palabra for palabra in palabras_claves if palabra in nombre_lower]
-            
-            patron_peso = r"(\d+\.?\d*)\s*(kg|g)" 
-            peso_encontrado = re.search(patron_peso, nombre, re.IGNORECASE)
-    
+           
             patron = r'^(.*?)\s+(\d+(?:\.\d+)?)\s*[kK][gG]\b'
             match = re.match(patron, nombre)
             
@@ -58,7 +54,7 @@ def extract_agrocomercial(url, categoria='sin categoria'):
                 if span_precio:
                     precio_final = span_precio.get_text(strip=True).replace('$', '').replace('.', '')
                 else:
-                    continue  # Saltar si no hay precio
+                    continue  
                     
             kg_int = int(kg)
             precio_bruto_total = int((precio_final))

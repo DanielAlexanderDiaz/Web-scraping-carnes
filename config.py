@@ -15,25 +15,25 @@ CONFIG_TIENDAS = {
     #     'extractor': extract_agrocomercial,
     #     'columns': ['Tienda','Categoria','Corte','Nombre Pagina','Precio x KG','Precio Pagina']
     # },
-    'ariztia': {
-        'base_url': 'https://www.ariztiaatucasa.cl/',
-        'urls': {
-            'pollo.html':'pollo', 
-            # 'pollo.html?p=2':'pollo', 'pollo.html?p=3':'pollo',
-            # 'pollo.html?p=4':'pollo', 'pollo.html?p=5':'pollo', 'pollo.html?p=6':'pollo',
-            # 'pavo.html':'pavo', 'pavo.html?p=2':'pavo', 'cerdo.html':'cerdo',
-            # 'vacuno.html':'vacuno', 'vacuno.html?p=2':'vacuno',
-            # 'congelados/hamburguesas.html':'otros',
-            # 'congelados/productos-churrasco-lomito-y-bistec.html':'otros',
-            # 'congelados/nuggets-y-apanados.html':'otros',
-        },
-        'extractor': extract_ariztia,
-        'columns': ['Tienda','Categoria','Corte','Nombre Pagina','Precio x KG','Precio Pagina']
-    },
+    # 'ariztia': {
+    #     'base_url': 'https://www.ariztiaatucasa.cl/',
+    #     'urls': {
+    #         'pollo.html':'pollo', 
+    #         'pollo.html?p=2':'pollo', 'pollo.html?p=3':'pollo',
+    #         'pollo.html?p=4':'pollo', 'pollo.html?p=5':'pollo', 'pollo.html?p=6':'pollo',
+    #         'pavo.html':'pavo', 'pavo.html?p=2':'pavo', 'cerdo.html':'cerdo',
+    #         'vacuno.html':'vacuno', 'vacuno.html?p=2':'vacuno',
+    #         'congelados/hamburguesas.html':'otros',
+    #         'congelados/productos-churrasco-lomito-y-bistec.html':'otros',
+    #         'congelados/nuggets-y-apanados.html':'otros',
+    #     },
+    #     'extractor': extract_ariztia,
+    #     'columns': ['Tienda','Categoria','Corte','Nombre Pagina','Precio x KG','Precio Pagina']
+    # },
     # 'carnesapunto': {
     #     'base_url': 'https://tienda.carnesapunto.cl/products/',
     #     'urls': {
-    #             'filete-bife':'vacuno','lomo-liso-c-hueso-chuleton-a-punto':'vacuno','entrecot-a-punto':'vacuno','box-edition-lomo-liso-bife':'vacuno','box-edition-medallon-de-filete':'vacuno',
+    #             'asado-canicero':'vacuno','filete-bife':'vacuno','lomo-liso-c-hueso-chuleton-a-punto':'vacuno','entrecot-a-punto':'vacuno','box-edition-lomo-liso-bife':'vacuno','box-edition-medallon-de-filete':'vacuno',
     #             'box-edition-tomahawk':'vacuno','box-edition-lomo-vetado-bife':'vacuno','hamburguesa-chuck-roll':'vacuno','hamburguesa-brisket':'vacuno','mollejas-a-punto':'vacuno',
     #             'chunchules':'vacuno','lengua-a-punto':'vacuno','criadillas-de-vacuno':'vacuno','panita-de-vacuno':'vacuno','ubres-de-vacuno-a-punto':'vacuno','rinones':'vacuno',
     #             'churrasco-a-punto-2':'vacuno','hueso-tuetano-a-punto':'vacuno','rabo-cola-de-vacuno':'vacuno','asado-de-tira-criollito-a-punto-2':'vacuno','posta-negra-a-punto-congelado':'vacuno',
@@ -41,14 +41,14 @@ CONFIG_TIENDAS = {
     #             'french-rack-de-tomahawk-2':'vacuno','garron-de-osobuco-prime-1-5-kg':'vacuno','punta-de-ganso-a-punto':'vacuno','lomo-vetado-entero':'vacuno','lomo-vetado-porcionado-a-punto':'vacuno',
     #             'lomo-liso-porcionado-a-punto':'vacuno','lomo-vetado-mi-bife':'vacuno','filete-a-punto':'vacuno','punta-picana-a-punto':'vacuno','punta-paleta-flat-iron-a-punto':'vacuno',
     #             'plateada-a-punto':'vacuno','asiento-a-punto':'vacuno','liso-bife-350-grs-a-punto':'vacuno','filete-importado-ft':'vacuno','arrachera-1-kg-aprox':'vacuno',
-    #             'pollo-ganso-a-punto':'vacuno','lomo-liso-a-punto':'vacuno','churrasco-fundo-sur-120-grs':'vacuno',
+    #             'pollo-ganso-a-punto':'vacuno','lomo-liso-a-punto':'vacuno','churrasco-fundo-sur-120-grs':'vacuno','osobuco-fundo-sur-2':'vacuno',
     #             'baby-back-ribs-curacaribs':'cerdo','pulled-pork':'cerdo','baby-back-ribs-campo-noble':'cerdo','costillar-de-cerdo-campo-noble':'cerdo','malaya-de-cerdo':'cerdo',
     #             'trutro-corto-granja-magdalena':'pollo','trutro-largo-granja-magdalena':'pollo','pechuga-deshuesada-800grs-granja-magdalena':'pollo','milanesa-de-pollo-familiar-1-kg':'pollo',
     #             'pollo-ahumado':'pollo','filetito-de-pollo-800grs-granja-magdalena':'pollo','panita-de-pollo-500-grs-aprox':'pollo','uprema-de-pollo-familiar-in-bocca':'pollo','pollo-entero-1-8-kg-aprox':'pollo',
     #             'chuletas-francesas-de-cordero-simunovic':'cordero','pierna-de-cordero-simunovic':'cordero','chuleta-parrillera-de-cordero-simunovic-2':'cordero','criadillas-de-cordero':'cordero',
     #     },
     #     'extractor': extract_carnesapunto,
-    #     'columns': ['Tienda','Categoria','Corte','Nombre Pagina','Precio x KG(neto)','precio pagina']
+    #     'columns': ['Tienda','Categoria','Corte','Nombre Pagina','Precio x KG','Precio Pagina']
     # },
     # 'carnesnubles': {
     #     'base_url': 'https://carnes.cl/collections/',
@@ -59,25 +59,25 @@ CONFIG_TIENDAS = {
     #         'aves':'pollo',
     #     },
     #     'extractor': extract_carnesnubles,
-    #     'columns': ['Tienda','Categoria','Corte','Nombre Pagina','Precio x KG(neto)','precio pagina']
+    #     'columns': ['Tienda','Categoria','Corte','Nombre Pagina','Precio x KG','Precio Pagina']
     # },
-    # 'donacarne': {
-    #     'base_url': 'https://ventasonline.xn--doacarne-e3a.cl/collections/',
-    #     'urls': {
-    #         'vacuno':'vacuno',
-    #         'vacuno?page=2':'vacuno',
-    #         'vacuno?page=3':'vacuno',
-    #         'vacuno?page=4':'vacuno',
-    #         'vacuno?page=5':'vacuno',
-    #         'ave':'pollo',
-    #         'ave?page=2':'pollo',
-    #         'cerdo':'cerdo',
-    #         'cerdo?page=2':'cerdo',
-    #         'miscelaneos':'otros',
-    #     },
-    #     'extractor': extract_donacarne,
-    #     'columns': ['Tienda','Categoria','Corte','Nombre Pagina','Precio x KG(neto)','precio pagina']
-    # },
+    'donacarne': {
+        'base_url': 'https://ventasonline.xn--doacarne-e3a.cl/collections/',
+        'urls': {
+            'vacuno':'vacuno',
+            'vacuno?page=2':'vacuno',
+            'vacuno?page=3':'vacuno',
+            'vacuno?page=4':'vacuno',
+            'vacuno?page=5':'vacuno',
+            'ave':'pollo',
+            'ave?page=2':'pollo',
+            'cerdo':'cerdo',
+            'cerdo?page=2':'cerdo',
+            'miscelaneos':'otros',
+        },
+        'extractor': extract_donacarne,
+        'columns': ['Tienda','Categoria','Corte','Nombre Pagina','Precio x KG','Precio Pagina']
+    },
     # 'elcarnicero': {
     #     'base_url': 'https://elcarnicero.cl/',
     #     'urls': {

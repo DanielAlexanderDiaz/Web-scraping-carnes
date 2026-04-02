@@ -36,7 +36,7 @@ def extract_donacarne(url, categoria='sin categoria'):
                 precio = 0
             
             nombre_largo = nombre
-            precio_neto_kg = precio 
+            precio_neto_kg = 0 
             precio_neto_total = precio
             
             nombre_lower = nombre.lower()

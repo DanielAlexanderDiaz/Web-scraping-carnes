@@ -10,12 +10,12 @@ def extract_carnesapunto(url, categoria='sin categoria'):
 
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
-
-        nombre = soup.find('span', class_='product-model').text
-        precio = soup.find('span',class_='bootic-price').text
-        match = re.search(r'\$(\d+\.*\d+)',precio)
+    
+        info_producto = soup.find('div', class_='title-description')
         
-        palabras_claves = [
+        if info_producto:
+            
+            palabras_claves = [
             'pechuga deshuesada','posta rosada','posta negra','pollo ganso','plateada','lomo vetado',
             'lomo liso','huachalomo','hamburguesa','ganso','carpaccio','molida','carne en tiras',
             'desmechada','cubos','wagyu','huachalomo','abastero','tapapecho','anticuchos','flat iron',
@@ -27,50 +27,52 @@ def extract_carnesapunto(url, categoria='sin categoria'):
             'corazón','filetillo','chuleta de centro','pavo entero','apanado','midlegs','lomo centro','trutro',
             'churrasco','asado carnicero','choclillo ','punta picana','entraña','filete','croqueta','milanesa',
             'pollo ahumado','filetito','panita ','chuletas francesas ','pierna','chuleta parrillera','criadillas',
-            'baby back ribs','pulled pork','pata','riñon','chunchules','ubres','lengua','molleja','cola','garron de osobuco',
-            'arrachera','asado de tira','estomaguillo','entrecot','tomahawk'
+            'baby back ribs','pulled pork','pata','riñon','chunchules','ubres','lengua','molleja','cola',
+            'arrachera','asado de tira','estomaguillo','entrecot','tomahawk','hígado','osobuco','hueso'
             ]
-        
-        nombre_lower = nombre.lower()
-        
-        etiquetas_encontradas = [palabra for palabra in palabras_claves if palabra in nombre_lower]
-        
-        if match:
-            precio = match.group(1).replace('.', '')
-            precio = int(precio)
-        else:
-            precio = 0
 
-        div_descripcion = soup.find('div', class_='product-description only-description')
+            nombre = info_producto.find('span', class_='product-model').text
+            
+            
+            try:
+                texto_corregido = nombre.encode('latin-1').decode('utf-8')
+            except Exception as e:
+                texto_corregido = nombre
+            
+            precio = info_producto.find('span',class_='bootic-price').text
+            match = re.search(r'\$(\d+\.*\d+)',precio)
+            if match:
+                precio = match.group(1).replace('.', '')
+                precio = int(precio)
+            else:
+                precio = 0
 
-        if div_descripcion is None:
-            precio_kg = 0
-        else:
-            texto = div_descripcion.get_text(strip=True)
-            numeros = re.findall(r'\d+\.?\d*', texto)
-            precio_kg = 0
-            for num in numeros:
-                if len(num)>3:
-                    precio_kg = num
-                    match = re.search(r'\$(\d+\.*\d+)',precio_kg)
-                    if match:
-                        precio_kg = match.group(1).replace('.', '')
-                        precio_kg = int(precio_kg)
-                    
-        nombre_largo = nombre 
-        precio_neto_kg = precio_kg
-        precio_neto_total = precio
-
-        corte = generar_nombre_producto(nombre_lower, etiquetas_encontradas)
+            div_descripcion = info_producto.find('div', class_='product-description')
+            if div_descripcion:     
+                pattern = r'\$[\d.]+'
+                ff = re.search(pattern, div_descripcion.text)
+                if ff:
+                    precio_texto = ff.group().replace('$', '').replace('.', '')
+                else:
+                    precio_texto = 0 
+            else:
+                precio_texto = 0
+                
+            nombre_lower = texto_corregido.lower()
+            
+            etiquetas_encontradas = [palabra for palabra in palabras_claves if palabra in nombre_lower]
+                
+            corte = generar_nombre_producto(nombre_lower, etiquetas_encontradas)
+            nombre_largo = texto_corregido
+            precio_neto_kg = precio_texto
+            precio_neto_total = precio
         
-        data.append([
-            nombre_tienda, 
-            categoria, 
-            corte,
-            nombre_largo,   
-            precio_neto_kg, 
-            precio_neto_total
-            ])
+            try:
+                if nombre:
+                    data.append([nombre_tienda,categoria,corte,nombre_largo,precio_neto_kg,precio_neto_total])
+            except (ValueError, ZeroDivisionError) as e:
+                print(f"Error procesando producto: {nombre_largo} - {e}")
+            
     
         print(f'Datos extraidos de {url}')
     else:

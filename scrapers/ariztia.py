@@ -1,18 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import re
-# from .utils import generar_nombre_producto
-
-def generar_nombre_producto(nombre_original, etiqueta_encontrada):
-    
-    if not etiqueta_encontrada:
-        return re.sub(r'\s+', ' ', nombre_original).strip().title()
-    
-    principal = etiqueta_encontrada[0].title()
-    
-    nombre_final = f'{principal}'
-    
-    return nombre_final
+from .utils import generar_nombre_producto
 
 def extract_ariztia(url, categoria='sin categoria'):
     response = requests.get(url)
@@ -21,7 +10,7 @@ def extract_ariztia(url, categoria='sin categoria'):
     
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
-        productos = soup.find_all('strong', class_='product-item-name')
+        info_producto = soup.find_all('div', class_='product-item-details')
         
         palabras_claves = [
             'pechuga deshuesada','posta rosada','posta negra','pollo ganso','plateada','lomo vetado',
@@ -36,43 +25,44 @@ def extract_ariztia(url, categoria='sin categoria'):
             'churrasco','asado carnicero','choclillo ','punta picana','entraña','filete','croqueta'
             ]
 
-        for producto in productos:
+        for producto in info_producto:
             
-            link_tag = producto.find('a', class_='product-item-link')
-            if not link_tag:
-                continue
-            nombre_producto = link_tag.text.strip()
+            nombre = producto.find('a',class_='product-item-link').text.strip()
             
-            nombre_lower = nombre_producto.lower()
+            nombre_lower = nombre.lower()
             
             etiquetas_encontradas = [palabra for palabra in palabras_claves if palabra in nombre_lower]
-
-            # Buscar el precio por kg
-            precio_origen = producto.find('span', class_='precio-kilo')
-            if not precio_origen:
-                continue
-
-            precio_texto = precio_origen.get_text()
-            patron_precio = re.compile(r'\$(\d+\.\d+)\s*kg', re.IGNORECASE)
-            match_precio = patron_precio.search(precio_texto)
-            if not match_precio:
-                continue
             
-            numero_str = match_precio.group(1)
-            valor_limpio = numero_str.replace('.', '')
-            valor_numerico = int(valor_limpio)
+            p = re.compile(r'\$(\d+\.\d+)\s*(kg)')
             
-            precio_total_final = 0 
-            precio_bruto_kg = int(valor_numerico)    
-            nombre_largo = nombre_producto.lstrip()
+            precio_kg = producto.find('span', class_='precio-kilo').text
+            precio_kg_f = p.search(precio_kg)
+            if precio_kg_f:
+                numero = precio_kg_f.group(1)
+                numero_limpio = numero.replace('.','')
+            else:
+                numero_limpio = 0
+                
+            p_ = re.compile(r'\$(\d+\.\d+)\s*')
+                
+            precio = producto.find('span', class_='price').text
+            precio_p = p_.search(precio)
+            if precio_p:
+                numero_f = precio_p.group(1)
+                numero_limpio_f = numero_f.replace('.','')
+            else:
+                numero_limpio_f = 0
+                
+            precio_x_kg = int(numero_limpio)
+            precio_pagina = int(numero_limpio_f)
             corte = generar_nombre_producto(nombre_lower, etiquetas_encontradas)
 
             try:      
-                if nombre_largo != 'sin data':
-                    data.append([nombre_tienda,categoria,corte,nombre_largo,precio_bruto_kg,precio_total_final])   
+                if nombre != 'sin data':
+                    data.append([nombre_tienda,categoria,corte,nombre,precio_x_kg,precio_pagina])   
                         
             except (ValueError, ZeroDivisionError) as e:
-                print(f"Error procesando producto: {nombre_largo} - {e}")
+                print(f"Error procesando producto: {nombre} - {e}")
                 continue
                     
         print(f"Datos extraídos de Ariztía: {url}")
