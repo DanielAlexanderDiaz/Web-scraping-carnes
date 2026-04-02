@@ -25,12 +25,14 @@ def extract_elcarnicero(url, categoria='sin categoria'):
         
         for producto in productos:
             nombre = producto.find('h2', class_='product-name').text
+            
+            p = r'[\d.]+'
             precio = producto.find('span', class_='price').text
+            precio_n = re.search(p, precio)
+            if precio_n:
+                precio_new = precio_n.group().replace(".", "")
             
             nombre_largo = nombre
-            precio_neto_kg = precio
-            precio_neto_total = precio
-            
             nombre_lower = nombre.lower()
         
             etiquetas_encontradas = [palabra for palabra in palabras_claves if palabra in nombre_lower]
@@ -39,15 +41,7 @@ def extract_elcarnicero(url, categoria='sin categoria'):
             
             try:
                 if nombre != 'sin data':
-                    data.append([
-                        nombre_tienda, 
-                        categoria,
-                        corte,
-                        nombre_largo, 
-                        precio_neto_kg,
-                        precio_neto_total
-                    ])
-            
+                    data.append([nombre_tienda,categoria,corte,nombre_largo,precio_new])
             except Exception as e:
                 print(f"Error al extraer datos del producto: {e}")
                 continue

@@ -45,14 +45,7 @@ def extract_donacarne(url, categoria='sin categoria'):
             
             corte = generar_nombre_producto(nombre_lower, etiquetas_encontradas)
                         
-            data.append([
-                nombre_tienda, 
-                categoria, 
-                corte,  
-                nombre_largo, 
-                precio_neto_kg, 
-                precio_neto_total
-            ])
+            data.append([nombre_tienda,categoria,corte,nombre_largo,precio_neto_total])
 
             print(f"Datos extraidos de {url}")
     else:

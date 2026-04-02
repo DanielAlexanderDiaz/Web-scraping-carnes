@@ -47,7 +47,6 @@ def extract_frigorifico(url, categoria='sin categoria'):
                         categoria,
                         corte,
                         nombre_largo, 
-                        precio_neto_kg,
                         precio_neto_total
                         ])
                 else:

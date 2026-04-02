@@ -63,7 +63,7 @@ def extract_agrocomercial(url, categoria='sin categoria'):
         
             try:    
                 if solo_nombre != 'sin data':
-                    data.append([nombre_tienda,categoria,corte,nombre,precio_bruto_kg,precio_bruto_total])  
+                    data.append([nombre_tienda,categoria,corte,nombre,precio_bruto_total])  
                                        
             except (ValueError, ZeroDivisionError) as e:
                 print(f"Error procesando producto: {nombre} - {e}")

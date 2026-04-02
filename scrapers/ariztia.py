@@ -59,7 +59,7 @@ def extract_ariztia(url, categoria='sin categoria'):
 
             try:      
                 if nombre != 'sin data':
-                    data.append([nombre_tienda,categoria,corte,nombre,precio_x_kg,precio_pagina])   
+                    data.append([nombre_tienda,categoria,corte,nombre,precio_pagina])   
                         
             except (ValueError, ZeroDivisionError) as e:
                 print(f"Error procesando producto: {nombre} - {e}")

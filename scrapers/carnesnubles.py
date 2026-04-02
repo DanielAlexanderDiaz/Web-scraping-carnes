@@ -51,14 +51,7 @@ def extract_carnesnubles(url, categoria='sin categoria'):
             precio_neto_kg = precio_final 
             precio_neto_total = precio_new_kg 
 
-            data.append([
-                nombre_tienda,
-                categoria,
-                corte,
-                nombre_largo,
-                precio_neto_total,
-                precio_neto_kg
-            ])
+            data.append([nombre_tienda,categoria,corte,nombre_largo,precio_neto_kg])
             
             print(f"Datos extraidos de {url}")
     else:

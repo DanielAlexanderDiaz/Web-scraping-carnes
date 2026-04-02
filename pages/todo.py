@@ -106,7 +106,7 @@ with st.container():
             df_limpio = df_macro.drop_duplicates(keep='first')
                 
             # Convertir columnas numéricas
-            columnas_numericas = ['Precio x KG', 'Precio Pagina']
+            columnas_numericas = ['Precio Pagina']
             df_limpio[columnas_numericas] = df_limpio[columnas_numericas].apply(pd.to_numeric, errors='coerce')
                 
             # Guardar en la variable única
@@ -156,7 +156,7 @@ if state.df_filtro is not None:
         with tab1:
             st.subheader("🔎 Resultados")
             st.dataframe(
-                df_display.sort_values('Precio x KG', ascending=True),
+                df_display.sort_values('Precio Pagina', ascending=True),
                 width='stretch',
                 hide_index=True
             )
@@ -169,20 +169,22 @@ if state.df_filtro is not None:
             col1, col2 = st.columns(2)
             with col1:
                 st.subheader("💰 Precio promedio por Categoria")
-                precio_por_categoria = df_display.groupby('Categoria')['Precio x KG'].mean().sort_values(ascending=False)
+                precio_por_categoria = df_display.groupby('Categoria')['Precio Pagina'].mean().sort_values(ascending=False)
                 st.bar_chart(precio_por_categoria)
             with col2:
                 st.subheader("📈 Estadisticas")
             
                 st.subheader("💰 Precio promedio por Tienda")
-                precio_por_tienda = df_display.groupby('Tienda')['Precio x KG'].mean().sort_values(ascending=False)
+                precio_por_tienda = df_display.groupby('Tienda')['Precio Pagina'].mean().sort_values(ascending=False)
                 st.bar_chart(precio_por_tienda)
         
     else:
         st.warning("No se encontraron productos con los filtros seleccionados", icon="⚠️")
         
 st.divider()
-st.badge("Ingresar al link del producto para ver sus caracteristicas")
+st.badge("La disponibilidad de los productos depende de la tienda")
+
+st.caption("🥩 Precios de Carnes | Desarrollado por Daniel Díaz")
 
             
 

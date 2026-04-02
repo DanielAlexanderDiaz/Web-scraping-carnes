@@ -49,17 +49,10 @@ def extract_procarne(url, categoria='sin categoria'):
         corte = generar_nombre_producto(nombre_lower, etiquetas_encontradas)
 
         nombre_largo = nombre.lower()
-        precio_neto_kg = 0
-        precio_neto_total = 0
+        precio_neto_kg = precio
+        precio_neto_total = precio_kg
 
-        data.append([
-            nombre_tienda,
-            categoria,
-            corte,
-            nombre_largo,
-            precio_neto_kg,
-            precio_neto_total
-            ])
+        data.append([nombre_tienda,categoria,corte,nombre_largo,precio_neto_total])
         
         print(f"Datos extraidos de {url}")
 

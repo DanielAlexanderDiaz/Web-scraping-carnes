@@ -69,7 +69,7 @@ def extract_carnesapunto(url, categoria='sin categoria'):
         
             try:
                 if nombre:
-                    data.append([nombre_tienda,categoria,corte,nombre_largo,precio_neto_kg,precio_neto_total])
+                    data.append([nombre_tienda,categoria,corte,nombre_largo,precio_neto_total])
             except (ValueError, ZeroDivisionError) as e:
                 print(f"Error procesando producto: {nombre_largo} - {e}")
             
